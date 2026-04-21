@@ -496,6 +496,12 @@
         <div class="nav-item" onclick="showTab('dryrun')" id="nav-dryrun">
             <span class="nav-icon">⚙️</span> Dry Run Simulasi TelU-Bot
         </div>
+        <div class="nav-item" onclick="showTab('dronerun')" id="nav-dronerun">
+            <span class="nav-icon">🚁</span> Case: Drone Logistik
+        </div>
+        <div class="nav-item" onclick="showTab('variations')" id="nav-variations">
+            <span class="nav-icon">🧠</span> Variasi Encoding
+        </div>
 
         <div class="nav-section-label">Materi Ujian</div>
         <div class="nav-item" onclick="showTab('representation')" id="nav-representation">
@@ -886,6 +892,259 @@
 </section>
 
 <!-- ====================================
+     TAB: DRONE LOGISTIK
+     ==================================== -->
+<section id="tab-dronerun" class="tab-panel">
+    <div class="page-header">
+        <h1>Case: Drone Logistik Bencana</h1>
+        <p>Distribusi logistik ke daerah terisolasi. Evaluasi batasan kapasitas 55kg, constraint handling, perolehan bonus, dan penalti untuk standar kemanusiaan.</p>
+    </div>
+
+    <!-- Step 0: Input -->
+    <div class="card" id="input-section-drone">
+        <h2>⬇️ Input Populasi Awal</h2>
+        <p>Masukkan nilai integer (0–31) untuk masing-masing atribut (x1-x4) pada 6 kromosom awal.</p>
+        <div class="info-box">
+            <ul style="margin:0; padding-left:1.2rem;">
+                <li><strong>Syarat 1:</strong> Minimal 2 kromosom total muatan > 55 kg</li>
+                <li><strong>Syarat 2:</strong> Minimal 1 kromosom memiliki atribut xi < 3 kg</li>
+            </ul>
+        </div>
+        <h3>Populasi (K1–K6)</h3>
+        <div id="pop-inputs-drone">
+            <!-- Diisi JS -->
+        </div>
+
+        <h3 style="margin-top:1.5rem;">Parameter Generasi 1</h3>
+        <div class="form-row" id="gen1-params-drone">
+            <div class="form-group"><label>R1</label><input type="text" id="gd1r1" value="0.250"></div>
+            <div class="form-group"><label>R2</label><input type="text" id="gd1r2" value="0.750"></div>
+            <div class="form-group"><label>R3</label><input type="text" id="gd1r3" value="0.400"></div>
+            <div class="form-group"><label>R4</label><input type="text" id="gd1r4" value="0.900"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="gd1c1a" value="5"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="gd1c1b" value="12"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="gd1c2a" value="8"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="gd1c2b" value="15"></div>
+        </div>
+        <div style="margin-top:0.75rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2);">Bit Mutasi Anak 1 (pisah koma)</label>
+            <input type="text" id="gd1m1" value="3,10,18" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 2</label>
+            <input type="text" id="gd1m2" value="5,15" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 3</label>
+            <input type="text" id="gd1m3" value="1,12" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 4</label>
+            <input type="text" id="gd1m4" value="7,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+        </div>
+
+        <h3 style="margin-top:1.5rem;">Parameter Generasi 2</h3>
+        <div class="form-row">
+            <div class="form-group"><label>R1</label><input type="text" id="gd2r1" value="0.100"></div>
+            <div class="form-group"><label>R2</label><input type="text" id="gd2r2" value="0.800"></div>
+            <div class="form-group"><label>R3</label><input type="text" id="gd2r3" value="0.300"></div>
+            <div class="form-group"><label>R4</label><input type="text" id="gd2r4" value="0.600"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="gd2c1a" value="2"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="gd2c1b" value="18"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="gd2c2a" value="4"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="gd2c2b" value="10"></div>
+        </div>
+        <div>
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2);">Bit Mutasi Anak 5</label>
+            <input type="text" id="gd2m5" value="2,5" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 6</label>
+            <input type="text" id="gd2m6" value="11" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 7</label>
+            <input type="text" id="gd2m7" value="14,19" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 8</label>
+            <input type="text" id="gd2m8" value="1,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="runSimulationDrone()">▶ Jalankan Simulasi Lengkap</button>
+            <button class="btn btn-secondary" onclick="resetToDefaultDrone()">↺ Reset ke Nilai Default</button>
+        </div>
+    </div>
+
+    <!-- DRY RUN OUTPUT -->
+    <div id="dry-run-output-drone" style="display:none;">
+
+        <!-- TAHAP 1: Representasi Biner -->
+        <div class="dry-step visible" id="dsd-t1">
+            <div class="dry-step-header">
+                <div class="dry-step-num">1</div>
+                <div><h3>TAHAP 1: Representasi Kromosom</h3><span>Format nilai 0-31 dalam biner 5 bit (Total 20 bit)</span></div>
+            </div>
+            <div class="dry-step-body">
+                <div class="tbl-wrap"><table id="t1d-table">
+                    <thead><tr><th>ID</th><th>Fenotip awal (x1,x2,x3,x4)</th><th>Kromosom (Biner 20-bit)</th></tr></thead>
+                    <tbody id="t1d-body"></tbody>
+                </table></div>
+            </div>
+        </div>
+
+        <!-- TAHAP 2: Evaluasi Gen 0 -->
+        <div class="dry-step visible" id="dsd-t2">
+            <div class="dry-step-header">
+                <div class="dry-step-num">2</div>
+                <div><h3>TAHAP 2: Evaluasi Populasi Awal</h3><span>Constraint Handling & Fitness</span></div>
+            </div>
+            <div class="dry-step-body">
+                <div class="info-box">
+                    <strong>Penting: Smoothing vs Penalti Keras</strong><br>
+                    Constraint handling dilakukan secara iteratif dengan mengurangi atribut mulai dari x4, x3, dst hingga beban pas maksimal 55kg.
+                    Ini adalah <strong>Smoothing</strong> karena kromosom dikoreksi menjadi batas aman, bukan dibuang atau dirusak dengan fitness=1.
+                    Penalti 50% hanya diberikan di akhir untuk atribut yang dinilai "tidak layak" (x &lt; 3).
+                </div>
+                <div class="tbl-wrap"><table id="t2d-table">
+                    <thead><tr><th>ID</th><th>Awal</th><th>Total</th><th>Constraint Handling</th><th>Fenotip Final</th><th>Total Akhir</th><th>Fitness Akhir</th><th>P(i)</th><th>Kumulatif</th></tr></thead>
+                    <tbody id="t2d-body"></tbody>
+                </table></div>
+                <div id="t2d-summary" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <!-- TAHAP 3: Elitisme -->
+        <div class="dry-step visible" id="dsd-t3">
+            <div class="dry-step-header">
+                <div class="dry-step-num">3</div>
+                <div><h3>TAHAP 3: Elitisme Generasi 0 → 1</h3><span>Pilih 2 kromosom fitness terbaik</span></div>
+            </div>
+            <div class="dry-step-body" id="t3d-body"></div>
+        </div>
+
+        <!-- TAHAP 4: Operator Gen 1 -->
+        <div class="dry-step visible" id="dsd-t4">
+            <div class="dry-step-header">
+                <div class="dry-step-num">4</div>
+                <div><h3>TAHAP 4: Operator Genetika Generasi 1</h3><span>Seleksi Roulette, Crossover, Mutasi</span></div>
+            </div>
+            <div class="dry-step-body" id="t4d-body"></div>
+        </div>
+
+        <!-- TAHAP 5: Evaluasi Gen 1 -->
+        <div class="dry-step visible" id="dsd-t5">
+            <div class="dry-step-header">
+                <div class="dry-step-num">5</div>
+                <div><h3>TAHAP 5: Evaluasi Generasi 1</h3><span>Gabungkan 2 Elit + 4 Anak</span></div>
+            </div>
+            <div class="dry-step-body">
+                <div class="tbl-wrap"><table id="t5d-table">
+                    <thead><tr><th>Sumber</th><th>Biner</th><th>Awal</th><th>Handling & Penalti</th><th>Final x1..4</th><th>Total</th><th>Fitness Akhir</th><th>P(i)</th><th>Kum.</th></tr></thead>
+                    <tbody id="t5d-body"></tbody>
+                </table></div>
+                <div id="t5d-summary" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <!-- TAHAP 6: Operator Gen 2 -->
+        <div class="dry-step visible" id="dsd-t6">
+            <div class="dry-step-header">
+                <div class="dry-step-num">6</div>
+                <div><h3>TAHAP 6: Operator Genetika Generasi 2</h3><span>Menghasilkan anak A5-A8</span></div>
+            </div>
+            <div class="dry-step-body" id="t6d-body"></div>
+        </div>
+
+        <!-- TAHAP 7: Evaluasi Gen 2 & Kesimpulan -->
+        <div class="dry-step visible" id="dsd-t7">
+            <div class="dry-step-header">
+                <div class="dry-step-num">7</div>
+                <div><h3>TAHAP 7: Kesimpulan & Analisis</h3><span>Populasi Akhir Berdasarkan Simulasi</span></div>
+            </div>
+            <div class="dry-step-body">
+                <div class="tbl-wrap"><table id="t7d-table">
+                    <thead><tr><th>Sumber</th><th>Biner</th><th>Awal</th><th>Handling & Penalti</th><th>Final x1..4</th><th>Total</th><th>Fitness Akhir</th></tr></thead>
+                    <tbody id="t7d-body"></tbody>
+                </table></div>
+                <div id="t7d-summary" style="margin-top:1.5rem;"></div>
+                
+                <div class="card" style="margin-top:1.5rem; background:rgba(0,0,0,0.3);">
+                    <h3 style="color:#60a5fa; margin-top:0;">Analisis Tambahan</h3>
+                    <p style="margin-bottom:0.5rem"><strong>1. Apakah kombinasi optimal selalu jatuh pada kelipatan bonus?</strong></p>
+                    <p style="color:var(--text2); margin-bottom:1rem; font-size:0.85rem;">Tidak selalu. Jika memaksakan mencari kelipatan bonus untuk suatu atribut (misal x1 Obat kelipatan 5kg = +15poin), sisa kapasitas yang digunakan mungkin tidak cukup luas untuk memicu bonus atribut lain atau bisa membuat ada atribut nol (mendapat penalti). Optimal sering terjadi ketika kombinasi bobot berdekatan dengan kelipatan bonus tapi memperhitungkan batas max 55.</p>
+
+                    <p style="margin-bottom:0.5rem"><strong>2. Apakah GA satu-satunya solusi?</strong></p>
+                    <p style="color:var(--text2); margin-bottom:1rem; font-size:0.85rem;">Tidak. Untuk masalah diskrit seperti knapsack problem ini (muatan dengan bobot), metode eksak seperti <em>Dynamic Programming</em> (DP) sangat efisien jika rentang kapasitas kecil/terbatas (misal 55kg). Namun jika skala masalah dan dimensi atributnya menjadi ribuan, DP akan memakan banyak memori, sehingga Metaheuristik (GA, SA, dll) menjadi relevan.</p>
+
+                    <p style="margin-bottom:0.5rem"><strong>3. Apakah binary encoding cocok & alternatifnya?</strong></p>
+                    <p style="color:var(--text2); margin-bottom:0; font-size:0.85rem;">Biner standar kurang stabil karena efek <em>Hamming Cliff</em> saat mutasi menyeberangi bilangan kritis (co: 15 ke 16 bertambah 1 desimal, berubah 5 bit). Alternatif yang jauh lebih baik untuk masalah ini adalah: 1) <strong>Integer/Real Representation</strong> (gen di dalam kromosom langsung bernilai 0-31), ditambah operator random mutation; 2) <strong>Gray Code</strong> yang perubahannya bertahap 1 bit per tahap angka.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ====================================
+     TAB: VARIASI ENCODING
+     ==================================== -->
+<section id="tab-variations" class="tab-panel">
+    <div class="page-header">
+        <h1>Variasi Encoding GA</h1>
+        <p>Eksplorasi representasi kromosom untuk memecahkan masalah Hamming Cliff pada Skema Biner Standar.</p>
+    </div>
+
+    <!-- Toggle Sub-Mode -->
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <button id="btn-var-gray" class="btn btn-primary" onclick="switchVarMode('gray')" style="flex:1;">MODE GRAY CODE</button>
+        <button id="btn-var-int" class="btn btn-secondary" onclick="switchVarMode('int')" style="flex:1; background:var(--bg-card);">MODE INTEGER ENCODING</button>
+    </div>
+
+    <!-- =============== GRAY CODE SECTION =============== -->
+    <div id="var-gray-section" style="display:block;">
+        <div class="card">
+            <h2>Gray Code Simulator</h2>
+            <p>Populasi awal dan parameter Crossover mengambil dari tab <strong>Case: Drone Logistik</strong>. Di mode ini, sebelum dioasikan, Biner diterjemahkan menjadi pola <strong>Gray Code</strong>. Setelah crossover & mutasi selesai, Gray Code di-decode kembali ke Biner Standar lalu dihitung Fitness-nya.</p>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="runSimulationGray()">▶ Hitung Mode Gray Code (Gen 1)</button>
+            </div>
+        </div>
+        <div id="gray-output" style="display:none; margin-top:1.5rem;">
+            <!-- Output Gray Code -->
+            <div class="dry-step visible"><div class="dry-step-header"><div class="dry-step-num">1</div><div><h3>Evaluasi & Konversi Gray Code</h3></div></div>
+            <div class="dry-step-body"><div class="tbl-wrap"><table id="vg-t1"><thead><tr><th>ID</th><th>Awal (Desimal)</th><th>Biner Standar 20-bit</th><th>Gray Code 20-bit</th><th>Fitness</th><th>Kumulatif</th></tr></thead><tbody id="vg-t1-body"></tbody></table></div></div></div>
+            
+            <div class="dry-step visible"><div class="dry-step-header"><div class="dry-step-num">2</div><div><h3>Crossover & Mutasi di Area Gray Code</h3><span>Memakai probability R1-R4 dari Tab Drone</span></div></div>
+            <div class="dry-step-body" id="vg-t2-body"></div></div>
+        </div>
+    </div>
+
+    <!-- =============== INTEGER SECTION =============== -->
+    <div id="var-int-section" style="display:none;">
+        <div class="card">
+            <h2>Integer Encoding Simulator</h2>
+            <p>Kromosom direpresentasikan dengan _array_ bilangan bulat `[x1, x2, x3, x4]`. Batas gen sekarang hanya berjumlah 4 indeks, bukan 20 bit.</p>
+            
+            <h3 style="margin-top:1.5rem;">Parameter Generasi 1 khusus Integer</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Titik Crossover P1 (1-3)</label><input type="number" id="vi_c1" value="2" min="1" max="3"></div>
+                <div class="form-group"><label>Titik Crossover P2 (1-3)</label><input type="number" id="vi_c2" value="1" min="1" max="3"></div>
+            </div>
+            
+            <p style="font-size:0.85rem; color:var(--text2); margin-top:0.5rem;">Format Mutasi: <code>index=n,val=m</code> (Contoh: `1=20` Gen ke-1(x2) menjadi 20). Kosongkan jika tanpa mutasi.</p>
+            <div class="form-row">
+                <div class="form-group"><label>Mutasi A1</label><input type="text" id="vi_m1" value="2=15"></div>
+                <div class="form-group"><label>Mutasi A2</label><input type="text" id="vi_m2" value="0=20"></div>
+                <div class="form-group"><label>Mutasi A3</label><input type="text" id="vi_m3" value="3=5"></div>
+                <div class="form-group"><label>Mutasi A4</label><input type="text" id="vi_m4" value="1=12"></div>
+            </div>
+            
+            <div class="btn-row" style="margin-top:1rem">
+                <button class="btn btn-primary" onclick="runSimulationInteger()">▶ Hitung Mode Integer Encoding (Gen 1)</button>
+            </div>
+        </div>
+        <div id="int-output" style="display:none; margin-top:1.5rem;">
+            <!-- Output Integer -->
+            <div class="dry-step visible"><div class="dry-step-header"><div class="dry-step-num">1</div><div><h3>Evaluasi Array Asli</h3></div></div>
+            <div class="dry-step-body"><div class="tbl-wrap"><table id="vi-t1"><thead><tr><th>ID</th><th>Genotip (Array)</th><th>Koreksi Overload</th><th>Fenotip Akhir</th><th>Fitness</th><th>Kumulatif</th></tr></thead><tbody id="vi-t1-body"></tbody></table></div></div></div>
+            
+            <div class="dry-step visible"><div class="dry-step-header"><div class="dry-step-num">2</div><div><h3>Slicing Crossover & Replace Mutation</h3></div></div>
+            <div class="dry-step-body" id="vi-t2-body"></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ====================================
      TAB: REPRESENTASI
      ==================================== -->
 <section id="tab-representation" class="tab-panel">
@@ -1142,6 +1401,19 @@ const defaultPop = [
     [9,3,8,3,15]
 ];
 
+// --- DRONE LOGISTIK STATE ---
+const attrsDrone = ['Obat (x1)','Air (x2)','Makanan (x3)','Pakaian (x4)'];
+const attrShortDrone = ['x1','x2','x3','x4'];
+
+const defaultPopDrone = [
+    [15, 20, 15, 10], // sum: 60 (>55 overload)
+    [30, 20, 10, 5],  // sum: 65 (>55 overload)
+    [10, 12, 10, 2],  // sum: 34 (x4=2 < 3)
+    [8, 1, 10, 10],   // sum: 29 (x2=1 < 3)
+    [10, 15, 12, 10], // sum: 47 (valid)
+    [15, 12, 10, 8]   // sum: 45 (valid)
+];
+
 // ====================================================
 // INIT POPULATION INPUTS
 // ====================================================
@@ -1190,6 +1462,55 @@ function resetToDefault() {
 }
 
 // ====================================================
+// INIT POPULATION INPUTS DRONE
+// ====================================================
+function initPopInputsDrone() {
+    const container = document.getElementById('pop-inputs-drone');
+    container.innerHTML = '';
+    for(let k = 0; k < 6; k++) {
+        const row = document.createElement('div');
+        row.style.marginBottom = '0.75rem';
+        
+        let html = `<div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.3rem;">
+            <span style="font-weight:700; font-family:'JetBrains Mono',monospace; color:#60a5fa; width:28px;">K${k+1}</span>
+            <div style="display:flex; gap:0.5rem; flex:1; flex-wrap:wrap;">`;
+        
+        for(let a = 0; a < 4; a++) {
+            let val = defaultPopDrone[k][a];
+            html += `<div style="flex:1; min-width:80px;">
+                <label style="font-size:0.72rem; color:var(--text2); display:block; margin-bottom:2px;">${attrShortDrone[a]}</label>
+                <input type="number" min="0" max="31" id="pop-d-k${k}-a${a}" value="${val}"
+                    style="width:100%; padding:0.5rem 0.6rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.85rem;">
+            </div>`;
+        }
+        html += `</div></div>`;
+        row.innerHTML = html;
+        container.appendChild(row);
+    }
+}
+
+function resetToDefaultDrone() {
+    initPopInputsDrone();
+    document.getElementById('gd1r1').value='0.250'; document.getElementById('gd1r2').value='0.750';
+    document.getElementById('gd1r3').value='0.400'; document.getElementById('gd1r4').value='0.900';
+    document.getElementById('gd1c1a').value='5'; document.getElementById('gd1c1b').value='12';
+    document.getElementById('gd1c2a').value='8';  document.getElementById('gd1c2b').value='15';
+    document.getElementById('gd1m1').value='3,10,18';
+    document.getElementById('gd1m2').value='5,15';
+    document.getElementById('gd1m3').value='1,12';
+    document.getElementById('gd1m4').value='7,20';
+    document.getElementById('gd2r1').value='0.100'; document.getElementById('gd2r2').value='0.800';
+    document.getElementById('gd2r3').value='0.300'; document.getElementById('gd2r4').value='0.600';
+    document.getElementById('gd2c1a').value='2'; document.getElementById('gd2c1b').value='18';
+    document.getElementById('gd2c2a').value='4'; document.getElementById('gd2c2b').value='10';
+    document.getElementById('gd2m5').value='2,5';
+    document.getElementById('gd2m6').value='11';
+    document.getElementById('gd2m7').value='14,19';
+    document.getElementById('gd2m8').value='1,20';
+    document.getElementById('dry-run-output-drone').style.display = 'none';
+}
+
+// ====================================================
 // HELPER FUNCTIONS
 // ====================================================
 function toBin4(n) {
@@ -1197,6 +1518,14 @@ function toBin4(n) {
 }
 
 function toDec4(b) {
+    return parseInt(b, 2);
+}
+
+function toBin5(n) {
+    return ('0'.repeat(5) + (Math.max(0,Math.min(31,n)).toString(2))).slice(-5);
+}
+
+function toDec5(b) {
     return parseInt(b, 2);
 }
 
@@ -1600,9 +1929,608 @@ function formatBinaryFull(binStr, mutBits) {
 }
 
 // ====================================================
+// DRONE LOGISTIK EVALUATION LOGIC
+// ====================================================
+
+function handleConstraintDrone(dec) {
+    let total = dec.reduce((a,b)=>a+b, 0);
+    let handled = [...dec];
+    let breakdown = [];
+    
+    if(total <= 55) {
+        breakdown.push(`Awal: ${total}kg (Valid)`);
+    } else {
+        breakdown.push(`Total awal: <span style="color:#f87171">${total}kg</span> (>55)`);
+        let currentTotal = total;
+        for(let i=3; i>=0; i--) {
+            if(currentTotal > 55 && handled[i] > 0) {
+                let excess = currentTotal - 55;
+                let reduction = Math.min(handled[i], excess);
+                handled[i] -= reduction;
+                currentTotal -= reduction;
+                breakdown.push(`Kurangi x${i+1} (-${reduction}kg)`);
+            }
+        }
+        breakdown.push(`Repair Total: <span style="color:#34d399">${currentTotal}kg</span>`);
+    }
+    
+    return { finalDec: handled, breakdown: breakdown.join('<br>') };
+}
+
+function calcFitnessDroneReal(dec) {
+    let total = dec.reduce((a,b)=>a+b,0);
+    // Base: 1kg = 2 poin
+    let fitnessBase = total * 2;
+    // Bonuses:
+    let bx1 = Math.floor(dec[0]/5) * 15;
+    let bx2 = Math.floor(dec[1]/4) * 10;
+    let bx3 = Math.floor(dec[2]/6) * 18;
+    let bx4 = Math.floor(dec[3]/3) * 8;
+    let fitnessTotal = fitnessBase + bx1 + bx2 + bx3 + bx4;
+    
+    let penaltyReason = [];
+    let hasPenalty = false;
+    for(let i=0; i<4; i++) {
+        if(dec[i] < 3) {
+            hasPenalty = true;
+            penaltyReason.push(`x${i+1}<3`);
+        }
+    }
+    
+    let finalFitness = fitnessTotal;
+    let msg = [];
+    if(hasPenalty) {
+        finalFitness = fitnessTotal * 0.5; // penalti 50%
+        msg.push(`<span style="color:#f87171">Penalti 50% (${penaltyReason.join(',')})</span>`);
+    } else {
+        msg.push(`<span style="color:#34d399">Layak (No Penalti)</span>`);
+    }
+    
+    return { fitness: finalFitness, baseFitness: fitnessTotal, penaltyMsg: msg.join('<br>'), hasPenalty, total };
+}
+
+function renderEvalTableDrone(tbodyId, pop) {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = '';
+    pop.forEach(e => {
+        const binFormatted = !e.hideBin && e.bin ? e.bin.match(/.{1,5}/g).join(' ') : '-';
+        tbody.innerHTML += `<tr>
+            <td><strong>${e.id}</strong></td>
+            ${e.hideBin ? '<td class="mono">-</td>' : `<td class="mono">${binFormatted}</td>`}
+            <td>(${e.origDec.join(', ')})</td>
+            <td>${e.breakdown}</td>
+            <td><strong>(${e.finalDec.join(', ')})</strong></td>
+            <td>${e.total}</td>
+            <td class="highlight-green">
+                <div style="font-size:0.85em; color:var(--text2); margin-bottom:2px">Base+Bonus: ${e.baseFitness}</div>
+                <div>${e.fitness}</div>
+                <div style="font-size:0.75em; margin-top:2px;">${e.penaltyMsg}</div>
+            </td>
+            ${e.prob !== undefined ? `<td class="mono">${e.prob.toFixed(3)}</td><td class="mono">${e.cum.toFixed(3)}</td>` : ''}
+        </tr>`;
+    });
+}
+
+function formatBinary5(binStr, crossStart, crossEnd, mutBits) {
+    let html = '';
+    for(let i = 0; i < 20; i++) {
+        let bit = binStr[i];
+        let isCross = crossStart && crossEnd && (i+1) >= crossStart && (i+1) <= crossEnd;
+        let isMut = mutBits && mutBits.includes(i+1);
+        let cls = bit === '1' ? 'bit-1' : 'bit-0';
+        if(isMut) cls += ' bit-mutated';
+        else if(isCross) cls += ' bit-crossed';
+        html += `<span class="${cls}">${bit}</span>`;
+        if((i+1) % 5 === 0 && i < 19) html += ' ';
+    }
+    return `<span class="mono">${html}</span>`;
+}
+
+function renderCrossoverDetailDrone(bin1, bin2, abefore, bbefore, aafter, bafter, pts, ma, mb, labelA, labelB, parents) {
+    const pt1 = Math.min(pts[0],pts[1]);
+    const pt2 = Math.max(pts[0],pts[1]);
+
+    let parentAId = '?', parentBId = '?';
+    for(let p of parents) { if(p.bin === bin1) parentAId = p.id; if(p.bin === bin2) parentBId = p.id; }
+
+    const decA_orig = [aafter.slice(0,5),aafter.slice(5,10),aafter.slice(10,15),aafter.slice(15,20)].map(b=>toDec5(b));
+    const chA = handleConstraintDrone(decA_orig);
+    const evA = calcFitnessDroneReal(chA.finalDec);
+    
+    const decB_orig = [bafter.slice(0,5),bafter.slice(5,10),bafter.slice(10,15),bafter.slice(15,20)].map(b=>toDec5(b));
+    const chB = handleConstraintDrone(decB_orig);
+    const evB = calcFitnessDroneReal(chB.finalDec);
+
+    return `<div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.75rem; color:#e2e8f0;">
+            Pasangan: <span style="color:#60a5fa;">${parentAId}</span> × <span style="color:#f472b6;">${parentBId}</span>
+            &nbsp;&nbsp; Titik Potong: bit ke-${pt1} dan bit ke-${pt2}
+        </div>
+        <div class="tbl-wrap"><table>
+            <thead><tr><th>Keterangan</th><th colspan="2">Biner 20 Bit</th></tr></thead>
+            <tbody>
+                <tr><td>Induk 1 (${parentAId})</td>
+                    <td colspan="2">${formatBinary5(bin1, pt1, pt2, [])}</td></tr>
+                <tr><td>Induk 2 (${parentBId})</td>
+                    <td colspan="2">${formatBinary5(bin2, pt1, pt2, [])}</td></tr>
+                <tr><td>${labelA} (setelah crossover)</td>
+                    <td colspan="2">${formatBinary5(abefore, pt1, pt2, [])}</td></tr>
+                <tr style="background:rgba(245,158,11,0.05)"><td>${labelA} (setelah mutasi: ${ma.join(',')||'-'})</td>
+                    <td colspan="2">${formatBinary5(aafter, ma)}</td></tr>
+                <tr><td>${labelB} (setelah crossover)</td>
+                    <td colspan="2">${formatBinary5(bbefore, pt1, pt2, [])}</td></tr>
+                <tr style="background:rgba(245,158,11,0.05)"><td>${labelB} (setelah mutasi: ${mb.join(',')||'-'})</td>
+                    <td colspan="2">${formatBinary5(bafter, mb)}</td></tr>
+            </tbody>
+        </table></div>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.75rem;">
+            <div style="flex:1; min-width:160px; background:rgba(0,0,0,0.2); border-radius:8px; padding:0.75rem; border:1px solid var(--border);">
+                <div style="font-size:0.75rem; color:var(--text2); font-weight:700; margin-bottom:0.3rem;">${labelA} → Evaluasi</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem;">Awal: (${decA_orig.join(', ')})</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#34d399;">Final: (${chA.finalDec.join(', ')})</div>
+                <div style="margin-top:0.25rem;"><span style="color:#fbbf24; font-weight:700;">Fitness: ${evA.fitness}</span></div>
+            </div>
+            <div style="flex:1; min-width:160px; background:rgba(0,0,0,0.2); border-radius:8px; padding:0.75rem; border:1px solid var(--border);">
+                <div style="font-size:0.75rem; color:var(--text2); font-weight:700; margin-bottom:0.3rem;">${labelB} → Evaluasi</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem;">Awal: (${decB_orig.join(', ')})</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#34d399;">Final: (${chB.finalDec.join(', ')})</div>
+                <div style="margin-top:0.25rem;"><span style="color:#fbbf24; font-weight:700;">Fitness: ${evB.fitness}</span></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderOperatorSectionDrone(parents, pIdxGroup, rVals, pair1arr, pair2arr, sourcePool, genIdx) {
+    const genLabel = genIdx === 0 ? 'Gen 0' : 'Gen 1';
+    let html = '';
+    html += `<h3>A. Seleksi Roulette Wheel</h3>
+    <p>Pemilihan induk dari probabilitas kumulatif populasi ${genLabel}:</p>
+    <div class="tbl-wrap"><table>
+        <thead><tr><th>Angka Random</th><th>Nilai</th><th>Terpilih</th><th>Biner (20-bit)</th><th>Fenotip Final</th><th>Fitness</th></tr></thead>
+        <tbody>`;
+    for(let i=0; i<4; i++) {
+        html += `<tr>
+            <td>R${i+1}</td>
+            <td class="mono">${rVals[i].toFixed(3)}</td>
+            <td><strong>${parents[i].id}</strong></td>
+            <td class="mono">${parents[i].bin.match(/.{1,5}/g).join(' ')}</td>
+            <td>(${parents[i].finalDec.join(', ')})</td>
+            <td class="highlight-green">${parents[i].fitness}</td>
+        </tr>`;
+    }
+    html += '</tbody></table></div>';
+    html += `<h3 style="margin-top:1.5rem;">B. Crossover & Mutasi</h3>`;
+    for(let p of [...pair1arr, ...pair2arr]) {
+        html += renderCrossoverDetailDrone(p.bin1, p.bin2, p.a_before, p.b_before, p.a, p.b, p.pt, p.ma, p.mb, p.labelA, p.labelB, parents);
+    }
+    return html;
+}
+
+function runSimulationDrone() {
+    // Collect Inputs
+    let pop = [];
+    let hasOverload = 0;
+    let hasPenalty = 0;
+    
+    for(let k = 0; k < 6; k++) {
+        let row = [];
+        let total = 0;
+        let anyLessThan3 = false;
+        
+        for(let a = 0; a < 4; a++) {
+            let valStr = document.getElementById(`pop-d-k${k}-a${a}`);
+            if(!valStr) { alert("Error HTML binding."); return; }
+            let v = parseInt(valStr.value);
+            if(isNaN(v) || v < 0 || v > 31) { alert(`K${k+1} atribut ${attrShortDrone[a]} harus bulat 0–31!`); return; }
+            row.push(v);
+            total += v;
+            if(v < 3) anyLessThan3 = true;
+        }
+        pop.push(row);
+        if(total > 55) hasOverload++;
+        if(anyLessThan3) hasPenalty++;
+    }
+
+    if(hasOverload < 2) { alert('Syarat gagal: Minimal 2 kromosom harus memiliki total bobot > 55 kg.'); return; }
+    if(hasPenalty < 1) { alert('Syarat gagal: Minimal 1 kromosom harus memiliki elemen < 3 kg.'); return; }
+
+    const curR = [
+        parseFloat(document.getElementById('gd1r1').value), parseFloat(document.getElementById('gd1r2').value),
+        parseFloat(document.getElementById('gd1r3').value), parseFloat(document.getElementById('gd1r4').value)
+    ];
+    const cg1c1 = [parseInt(document.getElementById('gd1c1a').value), parseInt(document.getElementById('gd1c1b').value)];
+    const cg1c2 = [parseInt(document.getElementById('gd1c2a').value), parseInt(document.getElementById('gd1c2b').value)];
+    const cg1mut = [parseBits(document.getElementById('gd1m1').value), parseBits(document.getElementById('gd1m2').value),
+                   parseBits(document.getElementById('gd1m3').value), parseBits(document.getElementById('gd1m4').value)];
+
+    const g2r = [parseFloat(document.getElementById('gd2r1').value), parseFloat(document.getElementById('gd2r2').value),
+                 parseFloat(document.getElementById('gd2r3').value), parseFloat(document.getElementById('gd2r4').value)];
+    const g2c1 = [parseInt(document.getElementById('gd2c1a').value), parseInt(document.getElementById('gd2c1b').value)];
+    const g2c2 = [parseInt(document.getElementById('gd2c2a').value), parseInt(document.getElementById('gd2c2b').value)];
+    const g2mut = [parseBits(document.getElementById('gd2m5').value), parseBits(document.getElementById('gd2m6').value),
+                   parseBits(document.getElementById('gd2m7').value), parseBits(document.getElementById('gd2m8').value)];
+
+    // TAHAP 1
+    let binPop = pop.map(row => row.map(v => toBin5(v)).join(''));
+    let t1Body = document.getElementById('t1d-body');
+    t1Body.innerHTML = '';
+    pop.forEach((row, i) => {
+        const binStr = binPop[i];
+        const parts = [binStr.slice(0,5), binStr.slice(5,10), binStr.slice(10,15), binStr.slice(15,20)];
+        t1Body.innerHTML += `<tr>
+            <td><strong>K${i+1}</strong></td>
+            <td>(${row.join(', ')})</td>
+            <td class="mono">${parts.join(' ')}</td>
+        </tr>`;
+    });
+
+    // TAHAP 2
+    let evalPop = pop.map((row, i) => {
+        let ch = handleConstraintDrone(row);
+        let ev = calcFitnessDroneReal(ch.finalDec);
+        return { id:`K${i+1}`, hideBin:false, origDec:row, bin:binPop[i], breakdown:ch.breakdown, finalDec:ch.finalDec, ...ev };
+    });
+
+    let totalFit0 = evalPop.reduce((s,e) => s+e.fitness, 0);
+    let cum0 = 0;
+    evalPop.forEach(e => {
+        e.prob = e.fitness / totalFit0;
+        cum0 += e.prob;
+        e.cum = Math.min(1.0, cum0);
+    });
+
+    renderEvalTableDrone('t2d-body', evalPop);
+    document.getElementById('t2d-summary').innerHTML = `<div class="info-box"><strong>Total Fitness = ${totalFit0}</strong></div>`;
+
+    // TAHAP 3
+    let sorted0 = [...evalPop].sort((a,b) => b.fitness - a.fitness);
+    let elit = [sorted0[0], sorted0[1]];
+    document.getElementById('t3d-body').innerHTML = `
+        <p>2 Kromosom Terbaik (Fitness tertinggi):</p>
+        <div class="tbl-wrap"><table>
+            <thead><tr><th>Posisi</th><th>Kromosom</th><th>Fenotip Final</th><th>Fitness</th></tr></thead>
+            <tbody>
+                <tr><td><span class="badge badge-yellow">Elit 1</span></td><td><strong>${elit[0].id}</strong></td><td>(${elit[0].finalDec.join(', ')})</td><td class="highlight-green">${elit[0].fitness}</td></tr>
+                <tr><td><span class="badge badge-yellow">Elit 2</span></td><td><strong>${elit[1].id}</strong></td><td>(${elit[1].finalDec.join(', ')})</td><td class="highlight-green">${elit[1].fitness}</td></tr>
+            </tbody>
+        </table></div>`;
+
+    // TAHAP 4
+    const cums0 = evalPop.map(e => e.cum);
+    const p1Idx = [selectRoulette(cums0, curR[0]), selectRoulette(cums0, curR[1]),
+                   selectRoulette(cums0, curR[2]), selectRoulette(cums0, curR[3])];
+    const parents1 = p1Idx.map(i => evalPop[i]);
+
+    let [a1_b, a2_b] = doCrossover2pt(parents1[0].bin, parents1[1].bin, cg1c1[0], cg1c1[1]);
+    let a1bin = flipBits(a1_b, cg1mut[0]);
+    let a2bin = flipBits(a2_b, cg1mut[1]);
+
+    let [a3_b, a4_b] = doCrossover2pt(parents1[2].bin, parents1[3].bin, cg1c2[0], cg1c2[1]);
+    let a3bin = flipBits(a3_b, cg1mut[2]);
+    let a4bin = flipBits(a4_b, cg1mut[3]);
+
+    document.getElementById('t4d-body').innerHTML = renderOperatorSectionDrone(
+        parents1, [p1Idx], curR,
+        [{bin1:parents1[0].bin, bin2:parents1[1].bin, a_before:a1_b, b_before:a2_b, a:a1bin, b:a2bin, pt:[cg1c1[0],cg1c1[1]], ma:cg1mut[0], mb:cg1mut[1], labelA:'A1', labelB:'A2'}],
+        [{bin1:parents1[2].bin, bin2:parents1[3].bin, a_before:a3_b, b_before:a4_b, a:a3bin, b:a4bin, pt:[cg1c2[0],cg1c2[1]], ma:cg1mut[2], mb:cg1mut[3], labelA:'A3', labelB:'A4'}],
+        evalPop, 0
+    );
+
+    // TAHAP 5
+    const children1 = [a1bin,a2bin,a3bin,a4bin].map((bin, i) => {
+        const dec = [bin.slice(0,5), bin.slice(5,10), bin.slice(10,15), bin.slice(15,20)].map(b => toDec5(b));
+        let ch = handleConstraintDrone(dec);
+        let ev = calcFitnessDroneReal(ch.finalDec);
+        return { id:`A${i+1}`, hideBin:true, origDec:dec, bin, breakdown:ch.breakdown, finalDec:ch.finalDec, ...ev };
+    });
+
+    const gen1pop = [
+        { ...elit[0], id:'Elit 1 ('+elit[0].id+')', hideBin:true },
+        { ...elit[1], id:'Elit 2 ('+elit[1].id+')', hideBin:true },
+        ...children1
+    ];
+    let totalFit1 = gen1pop.reduce((s,e)=>s+e.fitness,0);
+    let cum1 = 0;
+    gen1pop.forEach(e => {
+        e.prob = e.fitness/totalFit1;
+        cum1 += e.prob;
+        e.cum = Math.min(1.0, cum1);
+    });
+    
+    renderEvalTableDrone('t5d-body', gen1pop);
+    document.getElementById('t5d-summary').innerHTML = `<div class="info-box"><strong>Total Fitness = ${totalFit1}</strong></div>`;
+
+    // TAHAP 6
+    let sorted1 = [...gen1pop].sort((a,b)=>b.fitness-a.fitness);
+    let elit2 = [sorted1[0], sorted1[1]];
+
+    const cums1 = gen1pop.map(e => e.cum);
+    const p2Idx = [selectRoulette(cums1,g2r[0]), selectRoulette(cums1,g2r[1]),
+                   selectRoulette(cums1,g2r[2]), selectRoulette(cums1,g2r[3])];
+    const parents2 = p2Idx.map(i => gen1pop[i]);
+
+    let [a5_b, a6_b] = doCrossover2pt(parents2[0].bin, parents2[1].bin, g2c1[0], g2c1[1]);
+    let a5bin = flipBits(a5_b, g2mut[0]);
+    let a6bin = flipBits(a6_b, g2mut[1]);
+
+    let [a7_b, a8_b] = doCrossover2pt(parents2[2].bin, parents2[3].bin, g2c2[0], g2c2[1]);
+    let a7bin = flipBits(a7_b, g2mut[2]);
+    let a8bin = flipBits(a8_b, g2mut[3]);
+
+    document.getElementById('t6d-body').innerHTML = renderOperatorSectionDrone(
+        parents2, [p2Idx], g2r,
+        [{bin1:parents2[0].bin, bin2:parents2[1].bin, a_before:a5_b, b_before:a6_b, a:a5bin, b:a6bin, pt:[g2c1[0],g2c1[1]], ma:g2mut[0], mb:g2mut[1], labelA:'A5', labelB:'A6'}],
+        [{bin1:parents2[2].bin, bin2:parents2[3].bin, a_before:a7_b, b_before:a8_b, a:a7bin, b:a8bin, pt:[g2c2[0],g2c2[1]], ma:g2mut[2], mb:g2mut[3], labelA:'A7', labelB:'A8'}],
+        gen1pop, 1
+    );
+
+    // TAHAP 7
+    const children2 = [a5bin,a6bin,a7bin,a8bin].map((bin, i) => {
+        const dec = [bin.slice(0,5), bin.slice(5,10), bin.slice(10,15), bin.slice(15,20)].map(b => toDec5(b));
+        let ch = handleConstraintDrone(dec);
+        let ev = calcFitnessDroneReal(ch.finalDec);
+        return { id:`A${i+5}`, hideBin:true, origDec:dec, bin, breakdown:ch.breakdown, finalDec:ch.finalDec, ...ev, prob: undefined };
+    });
+
+    const gen2pop = [
+        { ...elit2[0], id:'Elit 1 ('+elit2[0].id.replace('Elit 1 ','').replace('Elit 2 ','')+')', prob: undefined, hideBin:true },
+        { ...elit2[1], id:'Elit 2 ('+elit2[1].id.replace('Elit 1 ','').replace('Elit 2 ','')+')', prob: undefined, hideBin:true },
+        ...children2
+    ];
+
+    renderEvalTableDrone('t7d-body', gen2pop);
+
+    let best = [...gen2pop].sort((a,b)=>b.fitness-a.fitness)[0];
+    document.getElementById('t7d-summary').innerHTML = `
+        <div class="success-box" style="margin-bottom:1rem;">
+            <p><strong>🏆 Kromosom Terbaik: ${best.id}</strong> dengan Fitness = <span style="color:#34d399; font-size:1.1em;">${best.fitness}</span></p>
+        </div>
+        <div class="summary-grid">
+            ${attrsDrone.map((a,i)=>`<div class="summary-card">
+                <div class="label">${a}</div>
+                <div class="value" style="color:${['#60a5fa','#34d399','#f472b6','#fbbf24'][i]}">${best.finalDec[i]}</div>
+                <div class="attr" style="font-size:0.7rem">Biner Asli: ${toBin5(best.origDec[i])}</div>
+            </div>`).join('')}
+            <div class="summary-card">
+                <div class="label">Total Kapasitas</div>
+                <div class="value" style="color:#34d399">${best.total}/55</div>
+                <div class="attr" style="font-size:0.7rem">Valid</div>
+            </div>
+        </div>`;
+
+    document.getElementById('dry-run-output-drone').style.display = 'block';
+    setTimeout(() => document.getElementById('dry-run-output-drone').scrollIntoView({behavior:'smooth'}), 100);
+}
+
+// ====================================================
+// VARIASI ENCODING LOGIC
+// ====================================================
+function switchVarMode(mode) {
+    if(mode === 'gray') {
+        document.getElementById('var-gray-section').style.display = 'block';
+        document.getElementById('var-int-section').style.display = 'none';
+        document.getElementById('btn-var-gray').style.background = 'var(--primary)';
+        document.getElementById('btn-var-int').style.background = 'var(--bg-card)';
+    } else {
+        document.getElementById('var-gray-section').style.display = 'none';
+        document.getElementById('var-int-section').style.display = 'block';
+        document.getElementById('btn-var-gray').style.background = 'var(--bg-card)';
+        document.getElementById('btn-var-int').style.background = 'var(--secondary)';
+    }
+}
+
+function toGrayStr(binStr) {
+    let gray = binStr[0];
+    for(let i=1; i<binStr.length; i++) {
+        gray += (parseInt(binStr[i-1]) ^ parseInt(binStr[i])).toString();
+    }
+    return gray;
+}
+
+function toBinFromGrayStr(grayStr) {
+    if(!grayStr) return '';
+    let bin = grayStr[0];
+    for(let i=1; i<grayStr.length; i++) {
+        bin += (parseInt(bin[i-1]) ^ parseInt(grayStr[i])).toString();
+    }
+    return bin;
+}
+
+function runSimulationGray() {
+    let pop = [];
+    for(let k = 0; k < 6; k++) {
+        let row = [];
+        for(let a = 0; a < 4; a++) {
+            let valStr = document.getElementById(`pop-d-k${k}-a${a}`);
+            if(!valStr) { alert("Load / Isi Tab Drone dulu."); return; }
+            row.push(parseInt(valStr.value));
+        }
+        pop.push(row);
+    }
+    
+    // Konversi Desimal ➔ Biner 5-bit ➔ Gray Code
+    let binPop = pop.map(row => row.map(v => toBin5(v)).join(''));
+    let grayPop = binPop.map(b => toGrayStr(b));
+    
+    let evalPop = grayPop.map((g, i) => {
+        let backToBin = toBinFromGrayStr(g);
+        let dec = [backToBin.slice(0,5), backToBin.slice(5,10), backToBin.slice(10,15), backToBin.slice(15,20)].map(b => toDec5(b));
+        let ch = handleConstraintDrone(dec);
+        let ev = calcFitnessDroneReal(ch.finalDec);
+        return { id:`K${i+1}`, origDec: dec, bin: backToBin, gray: g, finalDec: ch.finalDec, ...ev };
+    });
+
+    let totalFit = evalPop.reduce((s,e) => s+e.fitness, 0);
+    let cum = 0;
+    evalPop.forEach(e => {
+        e.prob = e.fitness / totalFit; cum += e.prob;
+        e.cum = Math.min(1.0, cum);
+    });
+
+    let tbody = document.getElementById('vg-t1-body');
+    tbody.innerHTML = '';
+    evalPop.forEach(e => {
+        tbody.innerHTML += `<tr>
+            <td><strong>${e.id}</strong></td>
+            <td>(${e.origDec.join(',')})</td>
+            <td class="mono" style="color:#60a5fa">${e.bin.match(/.{1,5}/g).join(' ')}</td>
+            <td class="mono" style="color:#f472b6; font-weight:bold;">${e.gray.match(/.{1,5}/g).join(' ')}</td>
+            <td class="highlight-green">${e.fitness}</td>
+            <td class="mono">${e.cum.toFixed(3)}</td>
+        </tr>`;
+    });
+
+    // Crossover in Gray Space (2 point)
+    const curR = [
+        parseFloat(document.getElementById('gd1r1').value), parseFloat(document.getElementById('gd1r2').value)
+    ];
+    let pts = [parseInt(document.getElementById('gd1c1a').value), parseInt(document.getElementById('gd1c1b').value)];
+    let muts = [parseBits(document.getElementById('gd1m1').value), parseBits(document.getElementById('gd1m2').value)];
+
+    const cums0 = evalPop.map(e => e.cum);
+    const pIdx = [selectRoulette(cums0, curR[0]), selectRoulette(cums0, curR[1])];
+    const parents = pIdx.map(i => evalPop[i]);
+
+    let [a1_g, a2_g] = doCrossover2pt(parents[0].gray, parents[1].gray, pts[0], pts[1]);
+    let a1_gm = flipBits(a1_g, muts[0]);
+    let a2_gm = flipBits(a2_g, muts[1]);
+    
+    // Evaluate Anak (convert Gray back to Dec)
+    let evAnak = [a1_gm, a2_gm].map((g, i) => {
+        let b = toBinFromGrayStr(g);
+        let dec = [b.slice(0,5), b.slice(5,10), b.slice(10,15), b.slice(15,20)].map(x => toDec5(x));
+        let ch = handleConstraintDrone(dec);
+        return { g, bin: b, origDec:dec, fn: ch.finalDec, ev: calcFitnessDroneReal(ch.finalDec) };
+    });
+
+    let t2 = document.getElementById('vg-t2-body');
+    let pt1 = Math.min(pts[0], pts[1]), pt2 = Math.max(pts[0], pts[1]);
+    t2.innerHTML = `<p>Menggunakan R1=${curR[0]} dan R2=${curR[1]}, Parents terpilih: <strong>${parents[0].id}</strong> dan <strong>${parents[1].id}</strong></p>
+    <div class="tbl-wrap"><table>
+        <thead><tr><th>Keterangan</th><th colspan="2">Genotip (Skema Gray Code)</th></tr></thead>
+        <tbody>
+            <tr><td>Induk 1 (${parents[0].id})</td><td colspan="2">${formatBinary5(parents[0].gray, pt1, pt2, [])}</td></tr>
+            <tr><td>Induk 2 (${parents[1].id})</td><td colspan="2">${formatBinary5(parents[1].gray, pt1, pt2, [])}</td></tr>
+            <tr style="background:rgba(245,158,11,0.05)"><td>Anak 1 (A1) dgn mutasi: ${muts[0].join(',')||'-'}</td><td colspan="2">${formatBinary5(a1_gm, muts[0], null, muts[0])}</td></tr>
+            <tr style="background:rgba(245,158,11,0.05)"><td>Anak 2 (A2) dgn mutasi: ${muts[1].join(',')||'-'}</td><td colspan="2">${formatBinary5(a2_gm, muts[1], null, muts[1])}</td></tr>
+        </tbody>
+    </table></div>
+    <div style="margin-top:1rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; background:rgba(0,0,0,0.2); border:1px solid var(--border); padding:1rem; border-radius:8px;">
+            <h4 style="color:#f472b6">Decode Anak 1 (A1)</h4>
+            <div class="mono" style="font-size:0.8rem; margin-bottom:0.5rem">Gray: ${a1_gm}<br>Biner Asli: ${evAnak[0].bin}</div>
+            <div style="font-size:0.85rem">Desimal Awal: (${evAnak[0].origDec.join(', ')})</div>
+            <div style="font-size:0.85rem; margin-bottom:0.25rem">Repair: (${evAnak[0].fn.join(', ')})</div>
+            <div>Fitness Final: <strong style="color:#34d399">${evAnak[0].ev.fitness}</strong></div>
+        </div>
+        <div style="flex:1; min-width:200px; background:rgba(0,0,0,0.2); border:1px solid var(--border); padding:1rem; border-radius:8px;">
+            <h4 style="color:#f472b6">Decode Anak 2 (A2)</h4>
+            <div class="mono" style="font-size:0.8rem; margin-bottom:0.5rem">Gray: ${a2_gm}<br>Biner Asli: ${evAnak[1].bin}</div>
+            <div style="font-size:0.85rem">Desimal Awal: (${evAnak[1].origDec.join(', ')})</div>
+            <div style="font-size:0.85rem; margin-bottom:0.25rem">Repair: (${evAnak[1].fn.join(', ')})</div>
+            <div>Fitness Final: <strong style="color:#34d399">${evAnak[1].ev.fitness}</strong></div>
+        </div>
+    </div>`;
+
+    document.getElementById('gray-output').style.display = 'block';
+}
+
+function runSimulationInteger() {
+    let pop = [];
+    for(let k = 0; k < 6; k++) {
+        let row = [];
+        for(let a = 0; a < 4; a++) {
+            let valStr = document.getElementById(`pop-d-k${k}-a${a}`);
+            if(!valStr) return;
+            row.push(parseInt(valStr.value));
+        }
+        pop.push(row);
+    }
+    
+    let evalPop = pop.map((row, i) => {
+        let ch = handleConstraintDrone(row);
+        let ev = calcFitnessDroneReal(ch.finalDec);
+        return { id:`K${i+1}`, origDec: row, finalDec: ch.finalDec, breakdown: ch.breakdown, ...ev };
+    });
+
+    let totalFit = evalPop.reduce((s,e) => s+e.fitness, 0);
+    let cum = 0;
+    evalPop.forEach(e => {
+        e.prob = e.fitness / totalFit; cum += e.prob;
+        e.cum = Math.min(1.0, cum);
+    });
+
+    let tbody = document.getElementById('vi-t1-body');
+    tbody.innerHTML = '';
+    evalPop.forEach(e => {
+        tbody.innerHTML += `<tr>
+            <td><strong>${e.id}</strong></td>
+            <td><strong class="mono" style="color:#60a5fa">[ ${e.origDec.join(', ')} ]</strong></td>
+            <td style="font-size:0.75rem">${e.breakdown}</td>
+            <td><strong>[${e.finalDec.join(', ')}]</strong></td>
+            <td class="highlight-green">${e.fitness}</td>
+            <td class="mono">${e.cum.toFixed(3)}</td>
+        </tr>`;
+    });
+
+    // Integer Crossover (1 Point)
+    const curR = [
+        parseFloat(document.getElementById('gd1r1').value), parseFloat(document.getElementById('gd1r2').value)
+    ];
+    let pt = parseInt(document.getElementById('vi_c1').value);
+    
+    // Roulette
+    const cums0 = evalPop.map(e => e.cum);
+    const pIdx = [selectRoulette(cums0, curR[0]), selectRoulette(cums0, curR[1])];
+    const parents = pIdx.map(i => evalPop[i]);
+    
+    // Crossover slice
+    let child1 = [...parents[0].origDec.slice(0, pt), ...parents[1].origDec.slice(pt)];
+    let child2 = [...parents[1].origDec.slice(0, pt), ...parents[0].origDec.slice(pt)];
+    
+    // Mutation parsing (e.g. "2=15")
+    let m1Str = document.getElementById('vi_m1').value.trim();
+    let m2Str = document.getElementById('vi_m2').value.trim();
+    
+    let mChild1 = [...child1];
+    let idxM1 = -1, valM1 = -1;
+    if(m1Str.includes('=')) {
+        [idxM1, valM1] = m1Str.split('=').map(x=>parseInt(x));
+        if(idxM1>=0 && idxM1<4) mChild1[idxM1] = valM1;
+    }
+    
+    let mChild2 = [...child2];
+    let idxM2 = -1, valM2 = -1;
+    if(m2Str.includes('=')) {
+        [idxM2, valM2] = m2Str.split('=').map(x=>parseInt(x));
+        if(idxM2>=0 && idxM2<4) mChild2[idxM2] = valM2;
+    }
+    
+    let ev1 = calcFitnessDroneReal(handleConstraintDrone(mChild1).finalDec);
+    let ev2 = calcFitnessDroneReal(handleConstraintDrone(mChild2).finalDec);
+
+    let t2 = document.getElementById('vi-t2-body');
+    t2.innerHTML = `<p>Roulette wheel (R1=${curR[0]}, R2=${curR[1]}) memilih Induk 1: <strong>${parents[0].id}</strong> dan Induk 2: <strong>${parents[1].id}</strong>. Titik potong array = setelah gen ke-${pt}.</p>
+    <div class="tbl-wrap"><table>
+        <thead><tr><th>Keterangan</th><th>Genotip (Array x1..x4)</th></tr></thead>
+        <tbody>
+            <tr><td>Induk 1 (${parents[0].id})</td><td class="mono" style="font-size:1.1rem">[ ${parents[0].origDec.map((x,i)=> i<pt ? `<span style="color:#10b981">${x}</span>` : x).join(', ')} ]</td></tr>
+            <tr><td>Induk 2 (${parents[1].id})</td><td class="mono" style="font-size:1.1rem">[ ${parents[1].origDec.map((x,i)=> i<pt ? `<span style="color:#10b981">${x}</span>` : x).join(', ')} ]</td></tr>
+            <tr><td>Anak 1 (A1 - Setelah potong)</td><td class="mono" style="font-size:1.1rem">[ ${child1.join(', ')} ]</td></tr>
+            <tr style="background:rgba(245,158,11,0.05)"><td>Anak 1 (A1 - Mutasi gen ${m1Str||'-'})</td><td class="mono" style="font-size:1.1rem">[ ${mChild1.map((x,i)=> i===idxM1 ? `<span style="color:#f59e0b;font-weight:bold">${x}</span>` : x).join(', ')} ] <span style="font-family:sans-serif; font-size:0.85rem; margin-left:1rem">→ Fitness: <strong class="highlight-green">${ev1.fitness}</strong></span></td></tr>
+            <tr><td>Anak 2 (A2 - Setelah potong)</td><td class="mono" style="font-size:1.1rem">[ ${child2.join(', ')} ]</td></tr>
+            <tr style="background:rgba(245,158,11,0.05)"><td>Anak 2 (A2 - Mutasi gen ${m2Str||'-'})</td><td class="mono" style="font-size:1.1rem">[ ${mChild2.map((x,i)=> i===idxM2 ? `<span style="color:#f59e0b;font-weight:bold">${x}</span>` : x).join(', ')} ] <span style="font-family:sans-serif; font-size:0.85rem; margin-left:1rem">→ Fitness: <strong class="highlight-green">${ev2.fitness}</strong></span></td></tr>
+        </tbody>
+    </table></div>`;
+
+    document.getElementById('int-output').style.display = 'block';
+}
+
+// ====================================================
 // THEORY ACCORDION
 // ====================================================
 function toggleStep(id) {
+
     const card = document.getElementById(id);
     card.classList.toggle('open');
 }
@@ -1683,6 +2611,7 @@ function calcGrayCode() {
 // ====================================================
 window.onload = () => {
     initPopInputs();
+    initPopInputsDrone();
     buildGrayTable();
     calcGrayCode();
     // Open first step cards
