@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Interaktif: Algoritma Genetika | Kecerdasan Artifisial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080e1a;
+            --bg2: #0f172a;
+            --bg3: #1e293b;
+            --glass: rgba(15, 23, 42, 0.7);
+            --glass2: rgba(30, 41, 59, 0.5);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59,130,246,0.35);
+            --secondary: #8b5cf6;
+            --accent: #10b981;
+            --accent2: #f59e0b;
+            --danger: #ef4444;
+            --pink: #ec4899;
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --border: rgba(255,255,255,0.08);
+            --border2: rgba(255,255,255,0.14);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse at 10% 20%, rgba(59,130,246,0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 10%, rgba(139,92,246,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(16,185,129,0.04) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page-wrap { position: relative; z-index: 1; }
+
+        /* SIDEBAR NAV */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0;
+            width: 260px;
+            height: 100vh;
+            background: rgba(8,14,26,0.95);
+            border-right: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-logo p { font-size: 0.75rem; color: var(--text2); margin-top: 0.25rem; }
+
+        .sidebar nav { padding: 1rem; flex: 1; }
+
+        .nav-section-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text2);
+            padding: 0.75rem 0.75rem 0.4rem;
+            margin-top: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            color: var(--text2);
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover { background: var(--glass2); color: var(--text); }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2));
+            border-color: rgba(99,102,241,0.3);
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        .nav-item .nav-icon { font-size: 1rem; min-width: 20px; text-align: center; }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 260px;
+            padding: 2rem 2.5rem;
+            max-width: 1100px;
+        }
+
+        .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+        .tab-panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.4rem;
+        }
+
+        .page-header p { color: var(--text2); font-size: 0.95rem; }
+
+        /* GLASS CARD */
+        .card {
+            background: var(--glass2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        /* STEP CARD for theory */
+        .step-card {
+            background: var(--glass2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .step-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+        .step-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            border-radius: 14px 0 0 14px;
+        }
+
+        .step-card.c1::before { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+        .step-card.c2::before { background: linear-gradient(180deg, #8b5cf6, #6d28d9); }
+        .step-card.c3::before { background: linear-gradient(180deg, #10b981, #059669); }
+        .step-card.c4::before { background: linear-gradient(180deg, #f59e0b, #b45309); }
+        .step-card.c5::before { background: linear-gradient(180deg, #ec4899, #be185d); }
+        .step-card.c6::before { background: linear-gradient(180deg, #14b8a6, #0f766e); }
+        .step-card.c7::before { background: linear-gradient(180deg, #f97316, #c2410c); }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .step-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .c1 .step-num { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .c2 .step-num { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .c3 .step-num { background: rgba(16,185,129,0.15); color: #34d399; }
+        .c4 .step-num { background: rgba(245,158,11,0.15); color: #fbbf24; }
+        .c5 .step-num { background: rgba(236,72,153,0.15); color: #f472b6; }
+        .c6 .step-num { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+        .c7 .step-num { background: rgba(249,115,22,0.15); color: #fb923c; }
+
+        .step-title h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.15rem; }
+        .step-title span { font-size: 0.8rem; color: var(--text2); }
+        .step-toggle { margin-left: auto; font-size: 1.2rem; color: var(--text2); transition: transform 0.3s; }
+        .step-card.open .step-toggle { transform: rotate(180deg); }
+
+        .step-body { display: none; }
+        .step-card.open .step-body { display: block; padding-top: 1rem; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+
+        /* TYPOGRAPHY helpers */
+        h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: #e2e8f0; }
+        h3 { font-size: 1.1rem; font-weight: 600; color: #cbd5e1; margin: 1.2rem 0 0.6rem; }
+        p { color: #cbd5e1; margin-bottom: 0.9rem; font-size: 0.92rem; }
+        p:last-child { margin-bottom: 0; }
+        strong { color: #e2e8f0; }
+
+        ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+        li { color: #cbd5e1; font-size: 0.92rem; margin-bottom: 0.4rem; }
+
+        .info-box {
+            background: rgba(59,130,246,0.08);
+            border: 1px solid rgba(59,130,246,0.25);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+        }
+        .warn-box {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+        }
+        .success-box {
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.25);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .formula {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: #a78bfa;
+            font-size: 0.9rem;
+            margin: 0.8rem 0;
+            overflow-x: auto;
+        }
+
+        /* BADGE */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        .badge-blue { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .badge-green { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-red { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+        .badge-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+        .badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+
+        /* TABLE */
+        .tbl-wrap { overflow-x: auto; margin: 1rem 0; border-radius: 10px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+        th {
+            background: rgba(255,255,255,0.04);
+            color: var(--text2);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); color: #cbd5e1; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+        td.highlight-green { color: #34d399; font-weight: 700; }
+        td.highlight-red { color: #f87171; font-weight: 700; }
+        td.highlight-blue { color: #60a5fa; font-weight: 700; }
+        td.highlight-yellow { color: #fbbf24; font-weight: 700; }
+
+        /* FORM ELEMENTS */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 0.4rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+        }
+        .form-group input.invalid { border-color: var(--danger); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.4rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+        .btn-secondary {
+            background: var(--glass2);
+            border-color: var(--border2);
+            color: var(--text);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent), #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+        }
+        .btn-success:hover { transform: translateY(-2px); }
+
+        .btn-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+
+        /* DRY RUN STEP SECTION */
+        .dry-step {
+            opacity: 0.3;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            margin-bottom: 1.5rem;
+        }
+        .dry-step.visible { opacity: 1; pointer-events: auto; }
+
+        .dry-step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--glass2);
+            border: 1px solid var(--border);
+            border-radius: 12px 12px 0 0;
+            border-bottom: none;
+        }
+        .dry-step-body {
+            background: var(--glass2);
+            border: 1px solid var(--border);
+            border-radius: 0 0 12px 12px;
+            padding: 1.5rem;
+        }
+        .dry-step-num {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        .dry-step-header h3 { font-size: 1rem; font-weight: 700; margin: 0; color: var(--text); }
+        .dry-step-header span { font-size: 0.8rem; color: var(--text2); }
+
+        /* Progress bar */
+        .prob-bar-wrap { display: flex; align-items: center; gap: 0.75rem; }
+        .prob-bar-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+        .prob-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), #059669); transition: width 0.6s ease; }
+        .prob-bar-label { font-size: 0.78rem; color: var(--text2); width: 42px; text-align: right; }
+
+        /* bit display */
+        .bit-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 2;
+            letter-spacing: 0.05em;
+        }
+        .bit-group { display: inline-block; margin-right: 0.5rem; }
+        .bit-0 { color: #60a5fa; }
+        .bit-1 { color: #f472b6; }
+        .bit-mutated { background: rgba(245,158,11,0.3); border-radius: 3px; color: #fbbf24; padding: 0 2px; }
+        .bit-crossed { background: rgba(16,185,129,0.2); border-radius: 3px; }
+
+        /* Roulette visual */
+        .roulette-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.4rem;
+            gap: 0.75rem;
+        }
+        .roulette-id { width: 36px; font-weight: 700; font-size: 0.85rem; color: var(--text2); }
+
+        /* GREY CODE TABLE */
+        .gc-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .gc-compare > div { padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+        .gc-compare .dec { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--accent2); }
+        .gc-compare .bin { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #60a5fa; }
+        .gc-compare .gray { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #f472b6; }
+
+        /* SUMMARY CARD */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .summary-card {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .summary-card .label { font-size: 0.75rem; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+        .summary-card .value { font-size: 1.5rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+        .summary-card .attr { font-size: 0.75rem; color: var(--text2); margin-top: 0.25rem; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>🧬 Modul GA Interaktif</h2>
+        <p>Kecerdasan Artifisial — Semester 2</p>
+    </div>
+    <nav>
+        <div class="nav-section-label">Teori</div>
+        <div class="nav-item active" onclick="showTab('theory')" id="nav-theory">
+            <span class="nav-icon">📚</span> 7 Langkah Algoritma Genetika
+        </div>
+
+        <div class="nav-section-label">Praktik</div>
+        <div class="nav-item" onclick="showTab('dryrun')" id="nav-dryrun">
+            <span class="nav-icon">⚙️</span> Dry Run Simulasi TelU-Bot
+        </div>
+
+        <div class="nav-section-label">Materi Ujian</div>
+        <div class="nav-item" onclick="showTab('representation')" id="nav-representation">
+            <span class="nav-icon">🔢</span> Variasi Representasi Biner
+        </div>
+        <div class="nav-item" onclick="showTab('validation')" id="nav-validation">
+            <span class="nav-icon">✅</span> Validasi Model
+        </div>
+    </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ====================================
+     TAB: THEORY (7 LANGKAH GA)
+     ==================================== -->
+<section id="tab-theory" class="tab-panel active">
+    <div class="page-header">
+        <h1>7 Langkah Algoritma Genetika</h1>
+        <p>Penjelasan umum setiap tahap GA — dari inisialisasi populasi hingga decoded solusi akhir.</p>
+    </div>
+
+    <div class="card">
+        <h2>Apa itu Algoritma Genetika?</h2>
+        <p>Algoritma Genetika (GA) adalah metode optimasi berbasis komputasi evolusioner yang terinspirasi dari teori <strong>Evolusi Darwin</strong>. GA meniru proses alam: hanya individu yang paling "fit" (cocok) yang bertahan dan mewariskan sifatnya ke generasi berikutnya.</p>
+        <div class="info-box">
+            <p><strong>Kapan GA digunakan?</strong> Saat ruang pencarian solusi terlalu besar untuk dicoba satu per satu (brute-force). Contoh: Optimasi jadwal kuliah, rute pengiriman terbaik, konfigurasi parameter robot, dll.</p>
+        </div>
+        <ul>
+            <li><strong>Kromosom</strong>: Satu calon solusi yang direpresentasikan sebagai rangkaian gen.</li>
+            <li><strong>Gen</strong>: Satu bagian kecil dari kromosom (misal: 1 bit, 1 integer, 1 permutasi).</li>
+            <li><strong>Populasi</strong>: Kumpulan sejumlah kromosom dalam satu generasi.</li>
+            <li><strong>Fitness</strong>: Nilai numerik yang mengukur seberapa "baik" sebuah kromosom sebagai solusi.</li>
+        </ul>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-card c1 open" id="sc1">
+        <div class="step-header" onclick="toggleStep('sc1')">
+            <div class="step-num">1</div>
+            <div class="step-title">
+                <h3>Inisialisasi Populasi</h3>
+                <span>Membuat kromosom awal secara acak</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Langkah pertama adalah membangkitkan sejumlah kromosom awal secara <strong>acak (random)</strong>. Kromosom-kromosom inilah yang membentuk <em>Populasi Generasi 0</em>.</p>
+            <h3>Poin Penting:</h3>
+            <ul>
+                <li><strong>Ukuran Populasi:</strong> Semakin besar populasi, semakin beragam kandidat solusi, namun komputasi lebih berat. Biasanya 20–200 individu.</li>
+                <li><strong>Keacakan Penting!</strong> Jika semua kromosom awal sama/mirip, GA akan sulit menemukan solusi optimal (converge prematur).</li>
+                <li><strong>Representasi Gen:</strong> Di sini kita menentukan format kromosom — apakah menggunakan Biner, Integer, Permutasi, Gray Code, dsb. (lebih lanjut di Tab Variasi Representasi).</li>
+                <li><strong>Pada kasus TelU-Bot:</strong> Setiap atribut (x1–x5) direpresentasikan dalam Biner 4-bit. Total 1 kromosom = 20 bit.</li>
+            </ul>
+            <div class="formula">Contoh: K1 = [1101 1011 0010 1000 0111]  → Desimal: (13, 11, 2, 8, 7)</div>
+        </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-card c2" id="sc2">
+        <div class="step-header" onclick="toggleStep('sc2')">
+            <div class="step-num">2</div>
+            <div class="step-title">
+                <h3>Evaluasi Fitness</h3>
+                <span>Menilai seberapa baik setiap kromosom sebagai solusi</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Setiap kromosom dihitung nilai <strong>Fitness</strong>-nya menggunakan <em>Fungsi Fitness</em> yang telah ditentukan. Fitness menentukan seberapa besar peluang kromosom tersebut "lolos" ke generasi berikutnya.</p>
+            <h3>Poin Penting:</h3>
+            <ul>
+                <li><strong>Fungsi Fitness (Objective Function):</strong> Diturunkan langsung dari tujuan masalah. Jika tujuannya maksimasi, semakin tinggi nilainya semakin baik.</li>
+                <li><strong>Constraint (Batasan):</strong> Jika solusi melanggar batasan (misalnya melebihi kapasitas), diberikan penalti (fitness sangat kecil, misal = 1), bukan dihapus.</li>
+                <li><strong>Dekoding:</strong> Kromosom biner harus dikonversi ke nilai fenotip terlebih dahulu sebelum dihitung fitness-nya.</li>
+                <li><strong>Mengapa tidak langsung menghapus solusi ilegal?</strong> Agar variasi gen tetap terjaga. Gen dari solusi ilegal bisa saja berguna saat dikombinasikan (crossover) dengan gen lain.</li>
+            </ul>
+            <div class="formula">f(x) = 3x₁ + 2x₂ + 4x₃ + x₄ + 2x₅ &nbsp;|&nbsp; Jika (x₁+x₂+x₃+x₄+x₅) &gt; 45, Fitness = 1 (Penalti)</div>
+            <h3>Menghitung Probabilitas Seleksi:</h3>
+            <div class="formula">P(i) = Fitness(i) / Σ Fitness(seluruh populasi)</div>
+            <p>Lalu hitung <strong>Probabilitas Kumulatif (CDF)</strong> dengan menjumlah probabilitas secara berurutan:</p>
+            <div class="formula">Cum(1) = P(1)<br>Cum(2) = Cum(1) + P(2)<br>Cum(n) = 1.000</div>
+        </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-card c3" id="sc3">
+        <div class="step-header" onclick="toggleStep('sc3')">
+            <div class="step-num">3</div>
+            <div class="step-title">
+                <h3>Elitisme (Elitism)</h3>
+                <span>Menjaga solusi terbaik agar tidak hilang</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Sebelum operasi genetika dilakukan, <strong>N individu terbaik</strong> (dengan fitness tertinggi) langsung disalin ke populasi generasi berikutnya. Ini menjamin kualitas populasi tidak pernah menurun.</p>
+            <h3>Poin Penting:</h3>
+            <ul>
+                <li><strong>Tujuan Elitisme:</strong> Mencegah solusi optimal yang sudah ditemukan hilang/rusak akibat proses crossover atau mutasi yang acak.</li>
+                <li><strong>Jumlah Elit:</strong> Biasanya 10–20% dari ukuran populasi. Pada simulasi TelU-Bot digunakan 2 elit dari 6 populasi.</li>
+                <li><strong>Trade-off:</strong> Terlalu banyak elit → populasi kurang beragam. Terlalu sedikit → risiko kehilangan solusi bagus.</li>
+            </ul>
+            <div class="success-box">
+                <p><strong>Perhatikan:</strong> Pada TelU-Bot, Elit-1 dan Elit-2 adalah K2 dan K5, dan keduanya terus bertahan di generasi selanjutnya karena tidak ada anak yang berhasil mengalahkan fitness mereka.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-card c4" id="sc4">
+        <div class="step-header" onclick="toggleStep('sc4')">
+            <div class="step-num">4</div>
+            <div class="step-title">
+                <h3>Seleksi Induk (Roulette Wheel)</h3>
+                <span>Memilih pasangan induk untuk proses reproduksi</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Proses memilih kromosom yang akan dijadikan "orang tua" untuk generasi berikutnya. Kromosom dengan fitness lebih tinggi punya <strong>peluang lebih besar</strong> untuk terpilih, namun bukan satu-satunya yang terpilih.</p>
+            <h3>Cara Kerja Roulette Wheel Selection:</h3>
+            <ol>
+                <li>Hitung probabilitas kumulatif setiap kromosom.</li>
+                <li>Bangkitkan angka random R ∈ [0, 1].</li>
+                <li>Pilih kromosom di mana <strong>Cum(K-1) &lt; R ≤ Cum(K)</strong>.</li>
+            </ol>
+            <div class="warn-box">
+                <p><strong>Mengapa tidak selalu memilih 2 terbaik?</strong> Jika hanya 2 terbaik saja yang selalu dipilih, populasi akan cepat seragam (homogen) dan GA akan terjebak di solusi lokal, gagal menemukan solusi global yang lebih baik.</p>
+            </div>
+            <h3>Poin Penting:</h3>
+            <ul>
+                <li>Individu dengan fitness rendah tetap punya peluang terpilih, meski kecil.</li>
+                <li>Butuh 4 induk (2 pasang) untuk menghasilkan 4 anak (jika populasi=6, dengan 2 elit).</li>
+                <li>Satu individu bisa terpilih lebih dari sekali.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step-card c5" id="sc5">
+        <div class="step-header" onclick="toggleStep('sc5')">
+            <div class="step-num">5</div>
+            <div class="step-title">
+                <h3>Crossover (Rekombinasi)</h3>
+                <span>Menukar/menggabungkan gen dari dua induk</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Dua kromosom induk "disilangkan" untuk menghasilkan dua kromosom anak. Proses ini meniru reproduksi biologis.</p>
+            <h3>2-Point Crossover (yang digunakan pada TelU-Bot):</h3>
+            <ol>
+                <li>Tentukan dua titik potong secara acak: <code>c1</code> dan <code>c2</code> (1 ≤ c1 &lt; c2 ≤ panjang kromosom).</li>
+                <li>Anak-1 mendapat segmen induk-1 di luar [c1,c2], dan segmen induk-2 di dalam [c1,c2].</li>
+                <li>Anak-2 adalah kebalikannya.</li>
+            </ol>
+            <div class="formula">Induk1: [AAAA AAA | BBB | AAAAAAAAA]<br>Induk2: [CCCC CCC | DDD | CCCCCCCCC]<br>─────────────────────────────────────<br>Anak1:  [AAAA AAA | DDD | AAAAAAAAA]<br>Anak2:  [CCCC CCC | BBB | CCCCCCCCC]</div>
+            <h3>Poin Penting:</h3>
+            <ul>
+                <li><strong>1-Point Crossover:</strong> Hanya satu titik potong. Lebih sederhana.</li>
+                <li><strong>2-Point Crossover:</strong> Dua titik potong. Lebih fleksibel dalam mengeksplorasi kombinasi gen.</li>
+                <li><strong>Crossover Rate:</strong> Biasanya 60–90% (tidak semua pasang otomatis di-crossover).</li>
+                <li><strong>Bahaya Representasi Biner Standar:</strong> Membalik bit MSB bisa mengubah nilai drastis (7↔15). Gray Code lebih "smooth".</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step-card c6" id="sc6">
+        <div class="step-header" onclick="toggleStep('sc6')">
+            <div class="step-num">6</div>
+            <div class="step-title">
+                <h3>Mutasi</h3>
+                <span>Memperkenalkan variasi genetik kecil secara acak</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Sejumlah kecil gen dalam kromosom anak diubah secara acak. Fungsinya mencegah GA terjebak di solusi lokal dan menjaga keberagaman gen.</p>
+            <h3>Bit-Flip Mutation (untuk representasi biner):</h3>
+            <p>Setiap bit memiliki probabilitas kecil untuk "dibalik" (0→1 atau 1→0). Probabilitas mutasi biasanya sangat kecil (1–10% per bit).</p>
+            <div class="formula">Sebelum: 1 1 0 1 1 0 1 1 0 0 1 0 [1] 0 0 0 0 1 1 1<br>                                                       ↑ bit ke-13 dibalik<br>Sesudah: 1 1 0 1 1 0 1 1 0 0 1 0 [0] 0 0 0 0 1 1 1</div>
+            <h3>Poin Penting:</h3>
+            <ul>
+                <li><strong>Mutasi Rate terlalu tinggi:</strong> Proses menjadi seperti random search, GA tidak konvergen.</li>
+                <li><strong>Mutasi Rate terlalu rendah:</strong> Populasi cepat homogen, terjebak optimum lokal.</li>
+                <li><strong>Mutasi ≠ Crossover:</strong> Crossover menggabungkan yang sudah ada; Mutasi menciptakan variasi yang belum pernah ada.</li>
+                <li>Pada representasi permutasi, mutasi dilakukan dengan <strong>Swap</strong> dua gen, bukan bit-flip.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step-card c7" id="sc7">
+        <div class="step-header" onclick="toggleStep('sc7')">
+            <div class="step-num">7</div>
+            <div class="step-title">
+                <h3>Pemilihan Generasi Baru & Decoding Solusi</h3>
+                <span>Membentuk populasi baru & mengartikan hasil</span>
+            </div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Populasi baru dibentuk dari gabungan <strong>Individu Elit + Anak-anak Hasil Crossover & Mutasi</strong>. Siklus ini berulang hingga kondisi berhenti terpenuhi.</p>
+            <h3>Kondisi Berhenti (Stopping Criteria):</h3>
+            <ul>
+                <li>Sudah mencapai jumlah generasi maksimum yang ditentukan.</li>
+                <li>Nilai fitness terbaik tidak meningkat dalam N generasi terakhir (converge).</li>
+                <li>Nilai fitness sudah mencapai threshold yang diinginkan.</li>
+            </ul>
+            <h3>Decoding Solusi Terbaik:</h3>
+            <p>Setelah iterasi selesai, kromosom dengan <strong>Fitness Tertinggi</strong> diambil dan di-decode kembali dari format genotip (biner) menjadi format fenotip (nilai nyata) yang bisa diinterpretasikan.</p>
+            <div class="formula">Kromosom Terbaik: 0110 1001 1110 1100 0100<br>→ Decode → Motor:6, Baterai:9, Sensor:14, Lengan:12, Kamera:4<br>→ Fitness: 3(6)+2(9)+4(14)+12+2(4) = 112</div>
+            <div class="success-box">
+                <p><strong>Kesimpulan:</strong> GA adalah proses <em>iteratif</em>. Satu "Generasi" = Langkah 2–7. Langkah 1 hanya dilakukan sekali di awal.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====================================
+     TAB: DRY RUN
+     ==================================== -->
+<section id="tab-dryrun" class="tab-panel">
+    <div class="page-header">
+        <h1>Dry Run Simulasi TelU-Bot</h1>
+        <p>Masukkan nilai populasi awal (bilangan bulat 0–15). Semua tahap GA akan dihitung secara otomatis.</p>
+    </div>
+
+    <!-- Step 0: Input -->
+    <div class="card" id="input-section">
+        <h2>⬇️ Input Populasi Awal</h2>
+        <p>Masukkan nilai integer (0–15) untuk masing-masing atribut pada 6 kromosom awal. Parameter roulette & crossover dan mutasi sudah diisi sesuai soal LKS Anda, namun dapat diubah.</p>
+
+        <h3>Populasi (K1–K6): Nilai Atribut Integer 0–15</h3>
+        <div id="pop-inputs">
+            <!-- Diisi JS -->
+        </div>
+
+        <h3 style="margin-top:1.5rem;">Parameter Generasi 1</h3>
+        <div class="form-row" id="gen1-params">
+            <div class="form-group"><label>R1</label><input type="text" id="g1r1" value="0.517"></div>
+            <div class="form-group"><label>R2</label><input type="text" id="g1r2" value="0.604"></div>
+            <div class="form-group"><label>R3</label><input type="text" id="g1r3" value="0.25"></div>
+            <div class="form-group"><label>R4</label><input type="text" id="g1r4" value="0.721"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="g1c1a" value="15"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="g1c1b" value="18"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="g1c2a" value="1"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="g1c2b" value="10"></div>
+        </div>
+        <div style="margin-top:0.75rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2);">Bit Mutasi Anak 1 (pisah koma)</label>
+            <input type="text" id="g1m1" value="1,9,12,19,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 2</label>
+            <input type="text" id="g1m2" value="2,10,12,13,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 3</label>
+            <input type="text" id="g1m3" value="15" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 4</label>
+            <input type="text" id="g1m4" value="18,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+        </div>
+
+        <h3 style="margin-top:1.5rem;">Parameter Generasi 2</h3>
+        <div class="form-row">
+            <div class="form-group"><label>R1</label><input type="text" id="g2r1" value="0.501"></div>
+            <div class="form-group"><label>R2</label><input type="text" id="g2r2" value="0.194"></div>
+            <div class="form-group"><label>R3</label><input type="text" id="g2r3" value="0.733"></div>
+            <div class="form-group"><label>R4</label><input type="text" id="g2r4" value="0.004"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="g2c1a" value="12"></div>
+            <div class="form-group"><label>Crossover P1 titik ke-</label><input type="text" id="g2c1b" value="14"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="g2c2a" value="12"></div>
+            <div class="form-group"><label>Crossover P2 titik ke-</label><input type="text" id="g2c2b" value="17"></div>
+        </div>
+        <div>
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2);">Bit Mutasi Anak 5</label>
+            <input type="text" id="g2m5" value="18,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 6</label>
+            <input type="text" id="g2m6" value="11" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 7</label>
+            <input type="text" id="g2m7" value="19" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text2); margin-top:0.6rem; display:block;">Bit Mutasi Anak 8</label>
+            <input type="text" id="g2m8" value="2,9,20" style="width:100%; padding:0.6rem 1rem; margin-top:0.3rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem;">
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="runSimulation()">▶ Jalankan Simulasi Lengkap</button>
+            <button class="btn btn-secondary" onclick="resetToDefault()">↺ Reset ke Nilai LKS</button>
+        </div>
+    </div>
+
+    <!-- DRY RUN OUTPUT -->
+    <div id="dry-run-output" style="display:none;">
+
+        <!-- TAHAP 1: Representasi Biner -->
+        <div class="dry-step visible" id="ds-t1">
+            <div class="dry-step-header">
+                <div class="dry-step-num">1</div>
+                <div><h3>TAHAP 1: Representasi Genotip (Encoding)</h3><span>Konversi nilai integer 0–15 ke biner 4-bit</span></div>
+            </div>
+            <div class="dry-step-body">
+                <p>Setiap atribut dikonversi ke representasi biner 4-bit. Total 1 kromosom = 5 atribut × 4 bit = <strong>20 bit</strong>.</p>
+                <div class="tbl-wrap"><table id="t1-table">
+                    <thead><tr><th>ID</th><th>Fenotip (x1,x2,x3,x4,x5)</th><th>Kromosom (Biner 20-bit)</th></tr></thead>
+                    <tbody id="t1-body"></tbody>
+                </table></div>
+            </div>
+        </div>
+
+        <!-- TAHAP 2: Evaluasi Gen 0 -->
+        <div class="dry-step visible" id="ds-t2">
+            <div class="dry-step-header">
+                <div class="dry-step-num">2</div>
+                <div><h3>TAHAP 2: Evaluasi Populasi Awal (Generasi 0)</h3><span>Hitung Fitness & Probabilitas Kumulatif</span></div>
+            </div>
+            <div class="dry-step-body">
+                <p>Hitung total atribut, cek constraint, hitung fitness. Kemudian hitung probabilitas seleksi masing-masing kromosom.</p>
+                <div class="tbl-wrap"><table id="t2-table">
+                    <thead><tr><th>ID</th><th>Kromosom (Biner)</th><th>Fenotip</th><th>Total X</th><th>Status</th><th>Fitness</th><th>P(i)</th><th>Kumulatif</th><th>Prob. Bar</th></tr></thead>
+                    <tbody id="t2-body"></tbody>
+                </table></div>
+                <div id="t2-summary" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <!-- TAHAP 3: Elitisme -->
+        <div class="dry-step visible" id="ds-t3">
+            <div class="dry-step-header">
+                <div class="dry-step-num">3</div>
+                <div><h3>TAHAP 3: Elitisme Generasi 0 → 1</h3><span>Pilih 2 kromosom terbaik untuk langsung dibawa ke generasi berikutnya</span></div>
+            </div>
+            <div class="dry-step-body" id="t3-body">
+            </div>
+        </div>
+
+        <!-- TAHAP 4: Operator Gen 1 -->
+        <div class="dry-step visible" id="ds-t4">
+            <div class="dry-step-header">
+                <div class="dry-step-num">4</div>
+                <div><h3>TAHAP 4: Operator Genetika Generasi 1</h3><span>Seleksi Roulette, 2-Point Crossover, Mutasi Bit-Flip → 4 Anak Baru</span></div>
+            </div>
+            <div class="dry-step-body" id="t4-body">
+            </div>
+        </div>
+
+        <!-- TAHAP 5: Evaluasi Gen 1 -->
+        <div class="dry-step visible" id="ds-t5">
+            <div class="dry-step-header">
+                <div class="dry-step-num">5</div>
+                <div><h3>TAHAP 5: Evaluasi Generasi 1</h3><span>Gabungkan 2 Elit + 4 Anak, hitung fitness baru</span></div>
+            </div>
+            <div class="dry-step-body">
+                <div class="tbl-wrap"><table id="t5-table">
+                    <thead><tr><th>Sumber</th><th>Kromosom (Biner)</th><th>Fenotip</th><th>Total X</th><th>Status</th><th>Fitness</th><th>P(i)</th><th>Kumulatif</th></tr></thead>
+                    <tbody id="t5-body"></tbody>
+                </table></div>
+                <div id="t5-summary" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <!-- TAHAP 6: Operator Gen 2 -->
+        <div class="dry-step visible" id="ds-t6">
+            <div class="dry-step-header">
+                <div class="dry-step-num">6</div>
+                <div><h3>TAHAP 6: Operator Genetika Generasi 2</h3><span>Seleksi Roulette, 2-Point Crossover, Mutasi → 4 Anak Baru (A5–A8)</span></div>
+            </div>
+            <div class="dry-step-body" id="t6-body">
+            </div>
+        </div>
+
+        <!-- TAHAP 7: Evaluasi Gen 2 & Kesimpulan -->
+        <div class="dry-step visible" id="ds-t7">
+            <div class="dry-step-header">
+                <div class="dry-step-num">7</div>
+                <div><h3>TAHAP 7: Evaluasi Generasi 2 & Kesimpulan</h3><span>Evaluasi akhir dan decoding solusi terbaik</span></div>
+            </div>
+            <div class="dry-step-body">
+                <div class="tbl-wrap"><table id="t7-table">
+                    <thead><tr><th>Sumber</th><th>Kromosom (Biner)</th><th>Fenotip</th><th>Total X</th><th>Status</th><th>Fitness Akhir</th></tr></thead>
+                    <tbody id="t7-body"></tbody>
+                </table></div>
+                <div id="t7-summary" style="margin-top:1.5rem;"></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ====================================
+     TAB: REPRESENTASI
+     ==================================== -->
+<section id="tab-representation" class="tab-panel">
+    <div class="page-header">
+        <h1>Variasi Representasi Genetik</h1>
+        <p>Yang dimaksud "variasi biner" oleh dosen adalah alternatif cara mengkodekan kromosom, khususnya <strong>Gray Code</strong> sebagai pengganti Binary Standar, serta representasi non-biner lainnya.</p>
+    </div>
+
+    <div class="card">
+        <h2>Mengapa Ada Variasi Representasi?</h2>
+        <p>Representasi Biner Standar memiliki kelemahan fundamental yang disebut <strong>"Hamming Cliff"</strong>: dua nilai yang bertetangga secara numerik bisa saja sangat jauh secara genetis (banyak bit berbeda), dan sebaliknya.</p>
+        <div class="formula">
+            7  = 0111 (biner standar)<br>
+            8  = 1000 (biner standar)<br>
+            ──────────────────────────<br>
+            Perbedaan: 4 BIT berubah sekaligus!<br>
+            Satu mutasi tidak cukup; butuh crossover sangat presisi.
+        </div>
+        <p>Ini menyebabkan <em>fitness landscape</em> menjadi tidak smooth — perubahan kecil pada genotip dapat menghasilkan perubahan nilai fenotip yang sangat besar atau tidak terduga.</p>
+    </div>
+
+    <!-- ---- GRAY CODE ---- -->
+    <div class="step-card c1 open" id="rsc1">
+        <div class="step-header" onclick="toggleStep('rsc1')">
+            <div class="step-num">A</div>
+            <div class="step-title"><h3>Gray Code (Kode Abu-abu)</h3><span>Variasi Biner yang paling relevan untuk ujian Anda</span></div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p><strong>Gray Code</strong> adalah sistem penomoran biner khusus di mana dua bilangan yang berurutan hanya berbeda <strong>tepat 1 bit</strong>. Ini memecahkan masalah Hamming Cliff pada representasi biner standar.</p>
+            <h3>Cara Konversi dari Biner Standar ke Gray Code:</h3>
+            <div class="formula">
+                Gray[0] = Biner[0]  (MSB sama)<br>
+                Gray[i] = Biner[i-1] XOR Biner[i]  (untuk i &gt; 0)<br>
+                ──────────────────────────────────────────────<br>
+                Biner:  0  1  1  1   (= 7)<br>
+                Gray:   0  1  1  0<br>
+                        ↑  ↑  ↑  ↑<br>
+                        │  0⊕1 1⊕1 1⊕1<br>
+                        sama
+            </div>
+            <h3>Tabel Perbandingan (Desimal 0–15):</h3>
+            <div class="tbl-wrap"><table id="gc-table">
+                <thead><tr><th>Desimal</th><th>Biner Standar</th><th>Gray Code</th><th>Perbedaan Bit (dg. sebelumnya)</th></tr></thead>
+                <tbody id="gc-table-body"></tbody>
+            </table></div>
+            <div class="success-box">
+                <p><strong>Perhatikan:</strong> Di kolom "Perbedaan Bit", untuk Gray Code selalu bernilai <strong>1</strong> (kecuali dari 0). Sedangkan Biner Standar dari 7→8 berubah 4 bit sekaligus!</p>
+            </div>
+            <h3>Cara Decode Gray Code kembali ke Desimal:</h3>
+            <div class="formula">
+                Biner[0] = Gray[0]<br>
+                Biner[i] = Biner[i-1] XOR Gray[i]<br>
+                ──────────────────────────────────<br>
+                Kemudian konversi Biner hasil ke Desimal.
+            </div>
+            <h3>Mengapa Gray Code Lebih Baik untuk GA?</h3>
+            <ul>
+                <li>Mutasi 1 bit = perubahan nilai 1 langkah. Lebih <strong>stabil dan terkontrol</strong>.</li>
+                <li>Crossover menghasilkan anak yang nilainya lebih "logis" dan dekat dengan induknya secara numerik.</li>
+                <li>Fitness landscape lebih smooth → GA lebih mudah menemukan solusi optimal.</li>
+            </ul>
+
+            <h3>Kalkulator Binary ↔ Gray Code Interaktif:</h3>
+            <div class="form-row" style="align-items:flex-end;">
+                <div class="form-group">
+                    <label>Nilai Desimal (0–15)</label>
+                    <input type="text" id="gc-input" value="7" oninput="calcGrayCode()">
+                </div>
+                <div class="form-group">
+                    <label>Biner Standar (4-bit)</label>
+                    <input type="text" id="gc-binary" readonly style="color:#60a5fa;">
+                </div>
+                <div class="form-group">
+                    <label>Gray Code (4-bit)</label>
+                    <input type="text" id="gc-gray" readonly style="color:#f472b6;">
+                </div>
+            </div>
+            <div id="gc-desc" class="info-box" style="margin-top:0;"></div>
+        </div>
+    </div>
+
+    <!-- ---- INTEGER ---- -->
+    <div class="step-card c3" id="rsc2">
+        <div class="step-header" onclick="toggleStep('rsc2')">
+            <div class="step-num">B</div>
+            <div class="step-title"><h3>Representasi Integer (Real-Valued)</h3><span>Gen langsung berupa angka bilangan bulat atau riil</span></div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Pada representasi ini, setiap gen langsung berisi nilai numerik (integer atau float) tanpa perlu dikodekan ke biner terlebih dahulu.</p>
+            <div class="formula">Kromosom: [ 13, 11, 2, 8, 7 ]  ← Langsung adalah x1,x2,x3,x4,x5</div>
+            <h3>Operator Khusus:</h3>
+            <ul>
+                <li><strong>Crossover:</strong> Bisa menggunakan <em>Arithmetic Crossover</em> (rata-rata dua nilai induk) atau Blend Crossover.</li>
+                <li><strong>Mutasi:</strong> Menambahkan nilai random kecil (Gaussian noise), atau mengganti dengan nilai random baru dalam rentang valid.</li>
+            </ul>
+            <h3>Kelebihan vs Biner:</h3>
+            <ul>
+                <li>Tidak ada efek Hamming Cliff.</li>
+                <li>Lebih intuitif untuk masalah numerik kontinu.</li>
+                <li>Lebih efisien (tidak butuh konversi biner bolak-balik).</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ---- PERMUTASI ---- -->
+    <div class="step-card c4" id="rsc3">
+        <div class="step-header" onclick="toggleStep('rsc3')">
+            <div class="step-num">C</div>
+            <div class="step-title"><h3>Representasi Permutasi</h3><span>Untuk masalah pengurutan (TSP, penjadwalan)</span></div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Digunakan jika solusi berupa <strong>urutan unik</strong> dari sekumpulan item. Setiap gen muncul tepat satu kali dalam kromosom.</p>
+            <div class="formula">Problem: Kunjungi 5 Kota (A,B,C,D,E) satu kali dengan jarak minimum<br>Kromosom: [ C, A, E, B, D ]  ← urutan kunjungan</div>
+            <h3>Crossover Khusus (Order Crossover / OX):</h3>
+            <ol>
+                <li>Pilih segmen dari Induk 1.</li>
+                <li>Salin segmen tersebut ke Anak di posisi yang sama.</li>
+                <li>Isi sisa posisi Anak dengan gen dari Induk 2, mengikuti urutan yang ada di Induk 2 (lewati yang sudah ada).</li>
+            </ol>
+            <div class="formula">
+Induk1: A B | C D E | F G<br>
+Induk2: G D | F B C | E A<br>
+─────────────────────────────<br>
+Anak1:  _ _ | C D E | _ _<br>
+Urutan Induk2 yg belum ada: G, B, F (dari urutan: G D F B C E A)<br>
+Anak1:  G B | C D E | F A</div>
+            <h3>Mutasi Khusus (Swap Mutation):</h3>
+            <p>Pilih dua posisi gen secara acak dan tukar nilai keduanya. Ini mempertahankan sifat "tidak ada duplikat".</p>
+            <div class="formula">Sebelum: [ C, A, E, B, D ]<br>                   ↑           ↑  posisi 1 & 4 ditukar<br>Sesudah: [ C, B, E, A, D ]</div>
+        </div>
+    </div>
+
+    <!-- ---- RINGKASAN ---- -->
+    <div class="card" style="margin-top:1.5rem;">
+        <h2>Ringkasan Pilih Representasi yang Tepat</h2>
+        <div class="tbl-wrap"><table>
+            <thead><tr><th>Jenis Representasi</th><th>Cocok Untuk</th><th>Crossover</th><th>Mutasi</th></tr></thead>
+            <tbody>
+                <tr><td><span class="badge badge-blue">Biner Standar</span></td><td>Optimasi dengan domain diskrit dan kecil</td><td>1-point / 2-point</td><td>Bit-Flip</td></tr>
+                <tr><td><span class="badge badge-purple">Gray Code</span></td><td>Optimasi numerik (lebih smooth dari biner)</td><td>1-point / 2-point</td><td>Bit-Flip (lebih stabil)</td></tr>
+                <tr><td><span class="badge badge-green">Integer / Real-Valued</span></td><td>Optimasi numerik kontinu / parameter</td><td>Arithmetic / Blend</td><td>Gaussian Noise / Random Reset</td></tr>
+                <tr><td><span class="badge badge-yellow">Permutasi</span></td><td>Penjadwalan, routing (TSP)</td><td>Order Crossover (OX)</td><td>Swap / Inversion</td></tr>
+            </tbody>
+        </table></div>
+    </div>
+</section>
+
+<!-- ====================================
+     TAB: VALIDASI MODEL
+     ==================================== -->
+<section id="tab-validation" class="tab-panel">
+    <div class="page-header">
+        <h1>Validasi Model</h1>
+        <p>Memastikan model AI/ML bekerja baik pada data baru, bukan hanya data pelatihan.</p>
+    </div>
+
+    <div class="card">
+        <h2>Mengapa Validasi Diperlukan?</h2>
+        <p>Sebuah model bisa "menghafal" data training (overfitting) alih-alih benar-benar belajar pola. Model seperti ini akan gagal ketika digunakan pada data nyata. Validasi mengukur kemampuan <strong>generalisasi</strong> model.</p>
+        <div class="info-box">
+            <p><strong>Overfitting:</strong> Model terlalu kompleks, akurasi training sangat tinggi tapi akurasi testing sangat rendah. Analoginya: hapalan soal yang sama terus, begitu soalnya berubah, langsung gagal.</p>
+        </div>
+    </div>
+
+    <div class="step-card c1 open" id="vsc1">
+        <div class="step-header" onclick="toggleStep('vsc1')">
+            <div class="step-num">1</div>
+            <div class="step-title"><h3>Holdout Method (Train-Test Split)</h3><span>Metode paling sederhana</span></div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Dataset dibagi menjadi dua bagian yang <strong>tidak tumpang tindih</strong>. Biasanya 80% untuk training dan 20% untuk testing.</p>
+            <div class="formula">Dataset (100 data) → [ 80 data Training ] + [ 20 data Testing ]</div>
+            <ul>
+                <li><strong>Kelebihan:</strong> Cepat dan mudah.</li>
+                <li><strong>Kekurangan:</strong> Hasil sangat bergantung pada "bagaimana data dibagi". Jika split kebetulan tidak merata (misalnya semua kelas langka ikut ke training), evaluasi jadi bias.</li>
+                <li><strong>Solusi:</strong> Gunakan <em>Stratified Split</em> untuk memastikan proporsi kelas tetap terjaga di kedua bagian.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step-card c2 open" id="vsc2">
+        <div class="step-header" onclick="toggleStep('vsc2')">
+            <div class="step-num">2</div>
+            <div class="step-title"><h3>K-Fold Cross Validation</h3><span>Metode validasi paling umum dan direkomendasikan</span></div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Dataset dibagi ke dalam <strong>K lipatan (fold)</strong>. Proses pelatihan dan pengujian diulang K-kali. Setiap kali, satu fold berbeda menjadi test set, sisanya train set.</p>
+            <div class="formula">
+K=4 → 4 Iterasi:<br>
+Iter 1: [TEST] [----] [----] [----]<br>
+Iter 2: [----] [TEST] [----] [----]<br>
+Iter 3: [----] [----] [TEST] [----]<br>
+Iter 4: [----] [----] [----] [TEST]<br>
+Hasil Akhir = Rata-rata Akurasi dari 4 Iterasi</div>
+            <ul>
+                <li><strong>K=5 atau K=10</strong> adalah nilai yang paling umum digunakan.</li>
+                <li>Setiap data mendapat giliran menjadi data test, sehingga evaluasi lebih fair.</li>
+                <li><strong>Leave-One-Out (LOO):</strong> Versi ekstrem di mana K = jumlah data total. Sangat akurat tapi sangat lambat.</li>
+            </ul>
+            <div class="success-box">
+                <p><strong>Mengapa lebih baik dari Holdout?</strong> Karena rata-rata dari K iterasi jauh lebih stabil dan tidak bergantung pada satu pembagian data saja.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-card c3 open" id="vsc3">
+        <div class="step-header" onclick="toggleStep('vsc3')">
+            <div class="step-num">3</div>
+            <div class="step-title"><h3>Confusion Matrix & Metrik Evaluasi</h3><span>Alat ukur kualitas model klasifikasi</span></div>
+            <span class="step-toggle">▼</span>
+        </div>
+        <div class="step-body">
+            <p>Confusion Matrix membandingkan kenyataan (Aktual) vs prediksi model untuk setiap kelas. Dari sini, berbagai metrik evaluasi dapat dihitung.</p>
+            <div class="tbl-wrap"><table>
+                <thead><tr><th></th><th>Prediksi: POSITIF</th><th>Prediksi: NEGATIF</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Aktual: POSITIF</strong></td><td style="background:rgba(16,185,129,0.15); color:#34d399; font-weight:700;">True Positive (TP)</td><td style="background:rgba(239,68,68,0.12); color:#f87171; font-weight:700;">False Negative (FN)</td></tr>
+                    <tr><td><strong>Aktual: NEGATIF</strong></td><td style="background:rgba(239,68,68,0.12); color:#f87171; font-weight:700;">False Positive (FP)</td><td style="background:rgba(16,185,129,0.15); color:#34d399; font-weight:700;">True Negative (TN)</td></tr>
+                </tbody>
+            </table></div>
+            <div class="formula">
+Accuracy  = (TP + TN) / (TP + TN + FP + FN)<br>
+Precision = TP / (TP + FP)     ← Dari yg diprediksi +, berapa yg beneran +?<br>
+Recall    = TP / (TP + FN)     ← Dari yg beneran +, berapa yg berhasil terdeteksi?<br>
+F1-Score  = 2 × (Precision × Recall) / (Precision + Recall)  ← Rata-rata harmonis</div>
+            <div class="warn-box">
+                <p><strong>Kapan Recall lebih penting?</strong> Di dunia medis! Deteksi penyakit kanker: lebih baik salah predict positif (FP=pasien normal dikira sakit) daripada melewatkan pasien yang benar-benar sakit (FN). FN di sini bisa berarti kematian.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+</div>
+
+<script>
+// ====================================================
+// GLOBAL STATE
+// ====================================================
+const attrs = ['Motor (x1)','Baterai (x2)','Sensor (x3)','Lengan (x4)','Kamera (x5)'];
+const attrShort = ['x1','x2','x3','x4','x5'];
+
+const defaultPop = [
+    [13,11,2,8,7],
+    [6,9,14,12,4],
+    [0,9,4,5,2],
+    [6,14,0,13,1],
+    [6,0,15,14,7],
+    [9,3,8,3,15]
+];
+
+// ====================================================
+// INIT POPULATION INPUTS
+// ====================================================
+function initPopInputs() {
+    const container = document.getElementById('pop-inputs');
+    container.innerHTML = '';
+    for(let k = 0; k < 6; k++) {
+        const row = document.createElement('div');
+        row.style.marginBottom = '0.75rem';
+        
+        let html = `<div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.3rem;">
+            <span style="font-weight:700; font-family:'JetBrains Mono',monospace; color:#60a5fa; width:28px;">K${k+1}</span>
+            <div style="display:flex; gap:0.5rem; flex:1; flex-wrap:wrap;">`;
+        
+        for(let a = 0; a < 5; a++) {
+            html += `<div style="flex:1; min-width:80px;">
+                <label style="font-size:0.72rem; color:var(--text2); display:block; margin-bottom:2px;">${attrShort[a]}</label>
+                <input type="number" min="0" max="15" id="pop-k${k}-a${a}" value="${defaultPop[k][a]}"
+                    style="width:100%; padding:0.5rem 0.6rem; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.85rem;">
+            </div>`;
+        }
+        html += `</div></div>`;
+        row.innerHTML = html;
+        container.appendChild(row);
+    }
+}
+
+function resetToDefault() {
+    initPopInputs();
+    document.getElementById('g1r1').value='0.517'; document.getElementById('g1r2').value='0.604';
+    document.getElementById('g1r3').value='0.25';  document.getElementById('g1r4').value='0.721';
+    document.getElementById('g1c1a').value='15'; document.getElementById('g1c1b').value='18';
+    document.getElementById('g1c2a').value='1';  document.getElementById('g1c2b').value='10';
+    document.getElementById('g1m1').value='1,9,12,19,20';
+    document.getElementById('g1m2').value='2,10,12,13,20';
+    document.getElementById('g1m3').value='15';
+    document.getElementById('g1m4').value='18,20';
+    document.getElementById('g2r1').value='0.501'; document.getElementById('g2r2').value='0.194';
+    document.getElementById('g2r3').value='0.733'; document.getElementById('g2r4').value='0.004';
+    document.getElementById('g2c1a').value='12'; document.getElementById('g2c1b').value='14';
+    document.getElementById('g2c2a').value='12'; document.getElementById('g2c2b').value='17';
+    document.getElementById('g2m5').value='18,20';
+    document.getElementById('g2m6').value='11';
+    document.getElementById('g2m7').value='19';
+    document.getElementById('g2m8').value='2,9,20';
+}
+
+// ====================================================
+// HELPER FUNCTIONS
+// ====================================================
+function toBin4(n) {
+    return ('0'.repeat(4) + (Math.max(0,Math.min(15,n)).toString(2))).slice(-4);
+}
+
+function toDec4(b) {
+    return parseInt(b, 2);
+}
+
+function parseBits(s) {
+    return s.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x) && x >= 1 && x <= 20);
+}
+
+function calcFitness(dec) {
+    const total = dec.reduce((a,b)=>a+b,0);
+    if(total > 45) return { fitness: 1, penalty: true, total };
+    const f = 3*dec[0] + 2*dec[1] + 4*dec[2] + dec[3] + 2*dec[4];
+    return { fitness: f, penalty: false, total };
+}
+
+function formatBinary(binStr, crossStart, crossEnd, mutBits) {
+    // crossStart, crossEnd: 1-indexed (inclusive)
+    // mutBits: array of 1-indexed bit positions
+    let html = '';
+    for(let i = 0; i < 20; i++) {
+        let bit = binStr[i];
+        let isCross = crossStart && crossEnd && (i+1) >= crossStart && (i+1) <= crossEnd;
+        let isMut = mutBits && mutBits.includes(i+1);
+        
+        let cls = bit === '1' ? 'bit-1' : 'bit-0';
+        if(isMut) cls += ' bit-mutated';
+        else if(isCross) cls += ' bit-crossed';
+        
+        html += `<span class="${cls}">${bit}</span>`;
+        if((i+1) % 4 === 0 && i < 19) html += ' ';
+    }
+    return `<span class="mono">${html}</span>`;
+}
+
+function flipBits(binStr, bits) {
+    let arr = binStr.split('');
+    for(let b of bits) {
+        let idx = b - 1;
+        arr[idx] = arr[idx] === '0' ? '1' : '0';
+    }
+    return arr.join('');
+}
+
+function doCrossover2pt(bin1, bin2, pt1, pt2) {
+    // pt1,pt2 are 1-indexed, crossover segment is [pt1..pt2] from one parent into other
+    let a1 = bin1.slice(0, pt1-1) + bin2.slice(pt1-1, pt2) + bin1.slice(pt2);
+    let a2 = bin2.slice(0, pt1-1) + bin1.slice(pt1-1, pt2) + bin2.slice(pt2);
+    return [a1, a2];
+}
+
+function selectRoulette(cum, r) {
+    for(let i = 0; i < cum.length; i++) {
+        if(r <= cum[i]) return i;
+    }
+    return cum.length - 1;
+}
+
+function statusBadge(penalty) {
+    return penalty
+        ? '<span class="badge badge-red">Overload (Penalti)</span>'
+        : '<span class="badge badge-green">Valid</span>';
+}
+
+function probBar(pct) {
+    return `<div class="prob-bar-wrap">
+        <div class="prob-bar-bg"><div class="prob-bar" style="width:${(pct*100).toFixed(1)}%"></div></div>
+        <span class="prob-bar-label">${(pct*100).toFixed(1)}%</span>
+    </div>`;
+}
+
+// ====================================================
+// MAIN SIMULATION
+// ====================================================
+function runSimulation() {
+    // --- Read population inputs ---
+    let pop = [];
+    for(let k = 0; k < 6; k++) {
+        let row = [];
+        for(let a = 0; a < 5; a++) {
+            let v = parseInt(document.getElementById(`pop-k${k}-a${a}`).value);
+            if(isNaN(v) || v < 0 || v > 15) { alert(`K${k+1} atribut ${attrShort[a]} harus 0–15!`); return; }
+            row.push(v);
+        }
+        pop.push(row);
+    }
+
+    // Read params
+    const g1r = [parseFloat(document.getElementById('g1r1').value), parseFloat(document.getElementById('g1r2').value),
+                 parseFloat(document.getElementById('g1r3').value), parseFloat(document.getElementById('g1r4').value)];
+    const g1c1 = [parseInt(document.getElementById('g1c1a').value), parseInt(document.getElementById('g1c1b').value)];
+    const g1c2 = [parseInt(document.getElementById('g1c2a').value), parseInt(document.getElementById('g1c2b').value)];
+    const g1mut = [parseBits(document.getElementById('g1m1').value), parseBits(document.getElementById('g1m2').value),
+                   parseBits(document.getElementById('g1m3').value), parseBits(document.getElementById('g1m4').value)];
+
+    const g2r = [parseFloat(document.getElementById('g2r1').value), parseFloat(document.getElementById('g2r2').value),
+                 parseFloat(document.getElementById('g2r3').value), parseFloat(document.getElementById('g2r4').value)];
+    const g2c1 = [parseInt(document.getElementById('g2c1a').value), parseInt(document.getElementById('g2c1b').value)];
+    const g2c2 = [parseInt(document.getElementById('g2c2a').value), parseInt(document.getElementById('g2c2b').value)];
+    const g2mut = [parseBits(document.getElementById('g2m5').value), parseBits(document.getElementById('g2m6').value),
+                   parseBits(document.getElementById('g2m7').value), parseBits(document.getElementById('g2m8').value)];
+
+    // === TAHAP 1: Encoding ===
+    let binPop = pop.map(row => row.map(v => toBin4(v)).join(''));
+
+    let t1Body = document.getElementById('t1-body');
+    t1Body.innerHTML = '';
+    pop.forEach((row, i) => {
+        const binStr = binPop[i];
+        const parts = [binStr.slice(0,4), binStr.slice(4,8), binStr.slice(8,12), binStr.slice(12,16), binStr.slice(16,20)];
+        t1Body.innerHTML += `<tr>
+            <td><strong>K${i+1}</strong></td>
+            <td>(${row.join(', ')})</td>
+            <td class="mono">${parts.join(' ')}</td>
+        </tr>`;
+    });
+
+    // === TAHAP 2: Evaluasi Gen 0 ===
+    let evalPop = pop.map((row, i) => {
+        const ev = calcFitness(row);
+        return { id:`K${i+1}`, dec:row, bin:binPop[i], ...ev };
+    });
+
+    let totalFit0 = evalPop.reduce((s,e) => s+e.fitness, 0);
+    let cum0 = 0;
+    evalPop.forEach(e => {
+        e.prob = e.fitness / totalFit0;
+        cum0 += e.prob;
+        e.cum = Math.min(1.0, cum0);
+    });
+
+    renderEvalTable('t2-body', evalPop, true);
+    document.getElementById('t2-summary').innerHTML = `
+        <div class="info-box"><strong>Total Fitness = ${totalFit0}</strong></div>`;
+
+    // === TAHAP 3: Elitisme Gen 0 → 1 ===
+    let sorted0 = [...evalPop].sort((a,b) => b.fitness - a.fitness);
+    let elit = [sorted0[0], sorted0[1]];
+    document.getElementById('t3-body').innerHTML = `
+        <p>Dua kromosom dengan fitness tertinggi dipilih dan dibawa langsung ke generasi berikutnya:</p>
+        <div class="tbl-wrap"><table>
+            <thead><tr><th>Posisi</th><th>Kromosom</th><th>Biner (20-bit)</th><th>Fenotip</th><th>Fitness</th></tr></thead>
+            <tbody>
+                <tr><td><span class="badge badge-yellow">Elit 1</span></td><td><strong>${elit[0].id}</strong></td>
+                    <td class="mono">${elit[0].bin.match(/.{1,4}/g).join(' ')}</td>
+                    <td>(${elit[0].dec.join(', ')})</td><td class="highlight-green">${elit[0].fitness}</td></tr>
+                <tr><td><span class="badge badge-yellow">Elit 2</span></td><td><strong>${elit[1].id}</strong></td>
+                    <td class="mono">${elit[1].bin.match(/.{1,4}/g).join(' ')}</td>
+                    <td>(${elit[1].dec.join(', ')})</td><td class="highlight-green">${elit[1].fitness}</td></tr>
+            </tbody>
+        </table></div>`;
+
+    // === TAHAP 4: Operator Gen 1 ===
+    // Roulette selection 4 parents from evalPop
+    const cums0 = evalPop.map(e => e.cum);
+    const p1Idx = [selectRoulette(cums0, g1r[0]), selectRoulette(cums0, g1r[1]),
+                   selectRoulette(cums0, g1r[2]), selectRoulette(cums0, g1r[3])];
+    const parents1 = p1Idx.map(i => evalPop[i]);
+
+    // Pair 1: parents1[0] & parents1[1] → A1, A2
+    let [a1bin_before, a2bin_before] = doCrossover2pt(parents1[0].bin, parents1[1].bin, g1c1[0], g1c1[1]);
+    let a1bin = flipBits(a1bin_before, g1mut[0]);
+    let a2bin = flipBits(a2bin_before, g1mut[1]);
+
+    // Pair 2: parents1[2] & parents1[3] → A3, A4
+    let [a3bin_before, a4bin_before] = doCrossover2pt(parents1[2].bin, parents1[3].bin, g1c2[0], g1c2[1]);
+    let a3bin = flipBits(a3bin_before, g1mut[2]);
+    let a4bin = flipBits(a4bin_before, g1mut[3]);
+
+    document.getElementById('t4-body').innerHTML = renderOperatorSection(
+        parents1, [p1Idx], g1r,
+        [{bin1:parents1[0].bin, bin2:parents1[1].bin, a_before:a1bin_before, b_before:a2bin_before, a:a1bin, b:a2bin, pt:[g1c1[0],g1c1[1]], ma:g1mut[0], mb:g1mut[1], labelA:'A1', labelB:'A2'}],
+        [{bin1:parents1[2].bin, bin2:parents1[3].bin, a_before:a3bin_before, b_before:a4bin_before, a:a3bin, b:a4bin, pt:[g1c2[0],g1c2[1]], ma:g1mut[2], mb:g1mut[3], labelA:'A3', labelB:'A4'}],
+        evalPop, 0
+    );
+
+    // === TAHAP 5: Evaluasi Gen 1 ===
+    const children1 = [a1bin,a2bin,a3bin,a4bin].map((bin, i) => {
+        const dec = [bin.slice(0,4), bin.slice(4,8), bin.slice(8,12), bin.slice(12,16), bin.slice(16,20)].map(b => toDec4(b));
+        const ev = calcFitness(dec);
+        return { id:`A${i+1}`, dec, bin, ...ev };
+    });
+
+    const gen1pop = [
+        { ...elit[0], id:'Elit 1 ('+elit[0].id+')' },
+        { ...elit[1], id:'Elit 2 ('+elit[1].id+')' },
+        ...children1
+    ];
+    let totalFit1 = gen1pop.reduce((s,e)=>s+e.fitness,0);
+    let cum1 = 0;
+    gen1pop.forEach(e => {
+        e.prob = e.fitness/totalFit1;
+        cum1 += e.prob;
+        e.cum = Math.min(1.0, cum1);
+    });
+    renderEvalTable('t5-body', gen1pop, true);
+    document.getElementById('t5-summary').innerHTML = `<div class="info-box"><strong>Total Fitness = ${totalFit1}</strong></div>`;
+
+    // Elitisme Gen 1 → 2
+    let sorted1 = [...gen1pop].sort((a,b)=>b.fitness-a.fitness);
+    let elit2 = [sorted1[0], sorted1[1]];
+
+    // === TAHAP 6: Operator Gen 2 ===
+    const cums1 = gen1pop.map(e => e.cum);
+    const p2Idx = [selectRoulette(cums1,g2r[0]), selectRoulette(cums1,g2r[1]),
+                   selectRoulette(cums1,g2r[2]), selectRoulette(cums1,g2r[3])];
+    const parents2 = p2Idx.map(i => gen1pop[i]);
+
+    let [a5bin_before, a6bin_before] = doCrossover2pt(parents2[0].bin, parents2[1].bin, g2c1[0], g2c1[1]);
+    let a5bin = flipBits(a5bin_before, g2mut[0]);
+    let a6bin = flipBits(a6bin_before, g2mut[1]);
+
+    let [a7bin_before, a8bin_before] = doCrossover2pt(parents2[2].bin, parents2[3].bin, g2c2[0], g2c2[1]);
+    let a7bin = flipBits(a7bin_before, g2mut[2]);
+    let a8bin = flipBits(a8bin_before, g2mut[3]);
+
+    document.getElementById('t6-body').innerHTML = renderOperatorSection(
+        parents2, [p2Idx], g2r,
+        [{bin1:parents2[0].bin, bin2:parents2[1].bin, a_before:a5bin_before, b_before:a6bin_before, a:a5bin, b:a6bin, pt:[g2c1[0],g2c1[1]], ma:g2mut[0], mb:g2mut[1], labelA:'A5', labelB:'A6'}],
+        [{bin1:parents2[2].bin, bin2:parents2[3].bin, a_before:a7bin_before, b_before:a8bin_before, a:a7bin, b:a8bin, pt:[g2c2[0],g2c2[1]], ma:g2mut[2], mb:g2mut[3], labelA:'A7', labelB:'A8'}],
+        gen1pop, 1
+    );
+
+    // === TAHAP 7: Evaluasi Gen 2 ===
+    const children2 = [a5bin,a6bin,a7bin,a8bin].map((bin, i) => {
+        const dec = [bin.slice(0,4), bin.slice(4,8), bin.slice(8,12), bin.slice(12,16), bin.slice(16,20)].map(b => toDec4(b));
+        const ev = calcFitness(dec);
+        return { id:`A${i+5}`, dec, bin, ...ev };
+    });
+
+    const gen2pop = [
+        { ...elit2[0], id:'Elit 1 ('+elit2[0].id.replace('Elit 1 ','').replace('Elit 2 ','')+')' },
+        { ...elit2[1], id:'Elit 2 ('+elit2[1].id.replace('Elit 1 ','').replace('Elit 2 ','')+')' },
+        ...children2
+    ];
+
+    renderEvalTableSimple('t7-body', gen2pop);
+
+    // Best solution
+    let best = [...gen2pop].sort((a,b)=>b.fitness-a.fitness)[0];
+    let bestDec = [best.bin.slice(0,4),best.bin.slice(4,8),best.bin.slice(8,12),best.bin.slice(12,16),best.bin.slice(16,20)].map(b=>toDec4(b));
+
+    document.getElementById('t7-summary').innerHTML = `
+        <div class="success-box" style="margin-bottom:1rem;">
+            <p><strong>🏆 Kromosom Terbaik: ${best.id}</strong> dengan Fitness = <span style="color:#34d399; font-size:1.1em;">${best.fitness}</span></p>
+        </div>
+        <h3>Decoding Spesifikasi TelU-Bot Terbaik:</h3>
+        <div class="summary-grid">
+            ${attrs.map((a,i)=>`<div class="summary-card">
+                <div class="label">${a}</div>
+                <div class="value" style="color:${['#60a5fa','#34d399','#f472b6','#fbbf24','#a78bfa'][i]}">${bestDec[i]}</div>
+                <div class="attr">Biner: <span class="mono" style="font-size:0.8rem;">${toBin4(bestDec[i])}</span></div>
+            </div>`).join('')}
+            <div class="summary-card">
+                <div class="label">Total Kapasitas</div>
+                <div class="value" style="color:${bestDec.reduce((a,b)=>a+b,0)>45?'#f87171':'#34d399'}">${bestDec.reduce((a,b)=>a+b,0)}/45</div>
+                <div class="attr">Terpakai</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Fitness Terbaik</div>
+                <div class="value" style="color:#fbbf24">${best.fitness}</div>
+                <div class="attr">3x1+2x2+4x3+x4+2x5</div>
+            </div>
+        </div>`;
+
+    document.getElementById('dry-run-output').style.display = 'block';
+    setTimeout(() => document.getElementById('dry-run-output').scrollIntoView({behavior:'smooth'}), 100);
+}
+
+function renderEvalTable(tbodyId, pop, showBar) {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = '';
+    pop.forEach(e => {
+        const binFormatted = e.bin.match(/.{1,4}/g).join(' ');
+        tbody.innerHTML += `<tr>
+            <td><strong>${e.id}</strong></td>
+            <td class="mono">${binFormatted}</td>
+            <td>(${e.dec.join(', ')})</td>
+            <td class="${e.penalty?'highlight-red':''}">${e.total}</td>
+            <td>${statusBadge(e.penalty)}</td>
+            <td class="highlight-green">${e.fitness}</td>
+            <td class="mono">${e.prob.toFixed(3)}</td>
+            <td class="mono">${e.cum.toFixed(3)}</td>
+            ${showBar ? `<td>${probBar(e.prob)}</td>` : ''}
+        </tr>`;
+    });
+}
+
+function renderEvalTableSimple(tbodyId, pop) {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = '';
+    pop.forEach(e => {
+        const binFormatted = e.bin.match(/.{1,4}/g).join(' ');
+        tbody.innerHTML += `<tr>
+            <td><strong>${e.id}</strong></td>
+            <td class="mono">${binFormatted}</td>
+            <td>(${e.dec.join(', ')})</td>
+            <td class="${e.penalty?'highlight-red':''}">${e.total}</td>
+            <td>${statusBadge(e.penalty)}</td>
+            <td class="highlight-green">${e.fitness}</td>
+        </tr>`;
+    });
+}
+
+function renderOperatorSection(parents, pIdxGroup, rVals, pair1arr, pair2arr, sourcePool, genIdx) {
+    const genLabel = genIdx === 0 ? 'Gen 0' : 'Gen 1';
+    let html = '';
+
+    // Roulette result
+    html += `<h3>A. Seleksi Roulette Wheel</h3>
+    <p>Angka random R1–R4 dicocokkan dengan probabilitas kumulatif populasi ${genLabel}:</p>
+    <div class="tbl-wrap"><table>
+        <thead><tr><th>Angka Random</th><th>Nilai</th><th>Terpilih</th><th>Biner (20-bit)</th><th>Fenotip</th><th>Fitness</th></tr></thead>
+        <tbody>`;
+    
+    for(let i=0; i<4; i++) {
+        html += `<tr>
+            <td>R${i+1}</td>
+            <td class="mono">${rVals[i].toFixed(3)}</td>
+            <td><strong>${parents[i].id}</strong></td>
+            <td class="mono">${parents[i].bin.match(/.{1,4}/g).join(' ')}</td>
+            <td>(${parents[i].dec.join(', ')})</td>
+            <td class="highlight-green">${parents[i].fitness}</td>
+        </tr>`;
+    }
+    html += '</tbody></table></div>';
+
+    // Crossover & Mutasi
+    html += `<h3 style="margin-top:1.5rem;">B. 2-Point Crossover & Mutasi Bit-Flip</h3>
+    <p>Tanda <span style="background:rgba(16,185,129,0.2); padding:0 4px; border-radius:3px; font-family:monospace;">hijau</span> = segmen yang ditukar (antara titik potong). Tanda <span style="background:rgba(245,158,11,0.3); padding:0 4px; border-radius:3px; font-family:monospace; color:#fbbf24;">kuning</span> = bit yang dimutasi.</p>`;
+
+    for(let p of [...pair1arr, ...pair2arr]) {
+        html += renderCrossoverDetail(p.bin1, p.bin2, p.a_before, p.b_before, p.a, p.b, p.pt, p.ma, p.mb, p.labelA, p.labelB, parents);
+    }
+
+    return html;
+}
+
+function renderCrossoverDetail(bin1, bin2, abefore, bbefore, aafter, bafter, pts, ma, mb, labelA, labelB, parents) {
+    const pt1 = Math.min(pts[0],pts[1]);
+    const pt2 = Math.max(pts[0],pts[1]);
+
+    // Find parent IDs
+    let parentAId = '?', parentBId = '?';
+    for(let p of parents) { if(p.bin === bin1) parentAId = p.id; if(p.bin === bin2) parentBId = p.id; }
+
+    // Decoded results
+    const decA = [aafter.slice(0,4),aafter.slice(4,8),aafter.slice(8,12),aafter.slice(12,16),aafter.slice(16,20)].map(b=>toDec4(b));
+    const evA = calcFitness(decA);
+    const decB = [bafter.slice(0,4),bafter.slice(4,8),bafter.slice(8,12),bafter.slice(12,16),bafter.slice(16,20)].map(b=>toDec4(b));
+    const evB = calcFitness(decB);
+
+    return `<div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.75rem; color:#e2e8f0;">
+            Pasangan: <span style="color:#60a5fa;">${parentAId}</span> × <span style="color:#f472b6;">${parentBId}</span>
+            &nbsp;&nbsp; Titik Potong: bit ke-${pt1} dan bit ke-${pt2}
+        </div>
+        <div class="tbl-wrap"><table>
+            <thead><tr><th>Keterangan</th><th>Bit 1–10</th><th>Bit 11–20</th></tr></thead>
+            <tbody>
+                <tr><td>Induk 1 (${parentAId})</td>
+                    <td>${formatBinary(bin1, pt1, pt2, [])}</td>
+                    <td></td></tr>
+                <tr><td>Induk 2 (${parentBId})</td>
+                    <td>${formatBinary(bin2, pt1, pt2, [])}</td>
+                    <td></td></tr>
+                <tr><td>${labelA} (setelah crossover)</td>
+                    <td colspan="2">${formatBinary(abefore, pt1, pt2, [])}</td></tr>
+                <tr style="background:rgba(245,158,11,0.05)"><td>${labelA} (setelah mutasi bit: ${ma.join(',')||'-'})</td>
+                    <td colspan="2">${formatBinaryFull(aafter, ma)}</td></tr>
+                <tr><td>${labelB} (setelah crossover)</td>
+                    <td colspan="2">${formatBinary(bbefore, pt1, pt2, [])}</td></tr>
+                <tr style="background:rgba(245,158,11,0.05)"><td>${labelB} (setelah mutasi bit: ${mb.join(',')||'-'})</td>
+                    <td colspan="2">${formatBinaryFull(bafter, mb)}</td></tr>
+            </tbody>
+        </table></div>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.75rem;">
+            <div style="flex:1; min-width:160px; background:rgba(0,0,0,0.2); border-radius:8px; padding:0.75rem; border:1px solid var(--border);">
+                <div style="font-size:0.75rem; color:var(--text2); font-weight:700; margin-bottom:0.3rem;">${labelA} → Fenotip & Fitness</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem;">(${decA.join(', ')}) | Total: ${evA.total}</div>
+                <div style="margin-top:0.25rem;">${statusBadge(evA.penalty)} <span style="color:#34d399; font-weight:700; margin-left:0.5rem;">Fitness: ${evA.fitness}</span></div>
+            </div>
+            <div style="flex:1; min-width:160px; background:rgba(0,0,0,0.2); border-radius:8px; padding:0.75rem; border:1px solid var(--border);">
+                <div style="font-size:0.75rem; color:var(--text2); font-weight:700; margin-bottom:0.3rem;">${labelB} → Fenotip & Fitness</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem;">(${decB.join(', ')}) | Total: ${evB.total}</div>
+                <div style="margin-top:0.25rem;">${statusBadge(evB.penalty)} <span style="color:#34d399; font-weight:700; margin-left:0.5rem;">Fitness: ${evB.fitness}</span></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function formatBinaryFull(binStr, mutBits) {
+    let html = '';
+    for(let i = 0; i < 20; i++) {
+        let bit = binStr[i];
+        let isMut = mutBits && mutBits.includes(i+1);
+        let cls = bit === '1' ? 'bit-1' : 'bit-0';
+        if(isMut) cls += ' bit-mutated';
+        html += `<span class="${cls}">${bit}</span>`;
+        if((i+1) % 4 === 0 && i < 19) html += ' ';
+    }
+    return `<span class="mono">${html}</span>`;
+}
+
+// ====================================================
+// THEORY ACCORDION
+// ====================================================
+function toggleStep(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+}
+
+// ====================================================
+// TAB NAVIGATION
+// ====================================================
+function showTab(tabName) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    document.getElementById('nav-' + tabName).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ====================================================
+// GRAY CODE GENERATOR
+// ====================================================
+function toGray(n) {
+    return n ^ (n >> 1);
+}
+
+function hammingDist(a, b) {
+    let diff = a ^ b;
+    let count = 0;
+    while(diff) { count += diff & 1; diff >>= 1; }
+    return count;
+}
+
+function buildGrayTable() {
+    const tbody = document.getElementById('gc-table-body');
+    tbody.innerHTML = '';
+    for(let d = 0; d <= 15; d++) {
+        const bin = ('0000' + d.toString(2)).slice(-4);
+        const gray = ('0000' + toGray(d).toString(2)).slice(-4);
+        const prevBin = d > 0 ? d-1 : null;
+        const prevGray = d > 0 ? toGray(d-1) : null;
+        
+        const binDiff = prevBin !== null ? hammingDist(d, d-1) : '-';
+        const grayDiff = prevGray !== null ? hammingDist(toGray(d), prevGray) : '-';
+        
+        tbody.innerHTML += `<tr>
+            <td class="mono">${d}</td>
+            <td class="mono" style="color:#60a5fa">${bin}</td>
+            <td class="mono" style="color:#f472b6">${gray}</td>
+            <td>Biner: <span style="color:${binDiff>1?'#f87171':'#34d399'}">${binDiff} bit</span> | 
+                Gray: <span style="color:#34d399">${grayDiff} bit</span></td>
+        </tr>`;
+    }
+}
+
+function calcGrayCode() {
+    const val = parseInt(document.getElementById('gc-input').value);
+    if(isNaN(val) || val < 0 || val > 15) {
+        document.getElementById('gc-desc').innerHTML = '<p style="color:#f87171">Masukkan nilai 0–15!</p>';
+        return;
+    }
+    const bin = ('0000' + val.toString(2)).slice(-4);
+    const gray = ('0000' + toGray(val).toString(2)).slice(-4);
+    document.getElementById('gc-binary').value = bin;
+    document.getElementById('gc-gray').value = gray;
+
+    // Step-by-step
+    let step = `<p><strong>Langkah konversi ${val} → Gray Code:</strong></p>
+        <div class="formula" style="margin:0.5rem 0;">`;
+    step += `Biner dari ${val}: <span style="color:#60a5fa">${bin}</span><br>`;
+    step += `Gray[0] = Biner[0] = ${bin[0]}<br>`;
+    for(let i=1; i<4; i++) {
+        const g = (parseInt(bin[i-1]) ^ parseInt(bin[i])).toString();
+        step += `Gray[${i}] = Biner[${i-1}](${bin[i-1]}) XOR Biner[${i}](${bin[i]}) = ${g}<br>`;
+    }
+    step += `<br>→ Gray Code: <span style="color:#f472b6">${gray}</span></div>`;
+    document.getElementById('gc-desc').innerHTML = step;
+}
+
+// ====================================================
+// INIT
+// ====================================================
+window.onload = () => {
+    initPopInputs();
+    buildGrayTable();
+    calcGrayCode();
+    // Open first step cards
+    document.querySelectorAll('.step-card:first-of-type').forEach(c => c.classList.add('open'));
+};
+</script>
+</body>
+</html>
